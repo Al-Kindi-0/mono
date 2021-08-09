@@ -1,4 +1,4 @@
-//! # ZKHash
+//! # zkhash
 //!
 //! A pure Rust implementation of the ReinforcedConcrete Permutation
 #![cfg_attr(feature = "asm", feature(asm))]

@@ -1,4 +1,4 @@
-use ZKHash::{
+use zkhash::{
     fields::{bls12::FpBLS12, utils},
     reinforced_concrete::{
         reinforced_concrete::ReinforcedConcrete, reinforced_concrete_instances::RC_BLS_PARAMS,

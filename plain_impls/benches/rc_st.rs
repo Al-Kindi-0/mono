@@ -1,5 +1,5 @@
 use criterion::{black_box, criterion_group, criterion_main, Criterion};
-use ZKHash::{
+use zkhash::{
     feistel_mimc::{feistel_mimc::FeistelMimc, feistel_mimc_instances::FM_ST_PARAMS},
     fields::{st::FpST, utils},
     poseidon::{poseidon::Poseidon, poseidon_instance_st::POSEIDON_ST_PARAMS},

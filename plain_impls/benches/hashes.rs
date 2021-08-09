@@ -9,9 +9,9 @@ use random::thread_rng;
 use random::Rng;
 use sha2::{Digest, Sha256};
 use sha3::Sha3_256;
-use ZKHash::pedersen_hash::pedersen_hash::pedersen_hash;
-use ZKHash::pedersen_hash::pedersen_hash::Personalization;
-use ZKHash::sinsemilla::sinsemilla::{
+use zkhash::pedersen_hash::pedersen_hash::pedersen_hash;
+use zkhash::pedersen_hash::pedersen_hash::Personalization;
+use zkhash::sinsemilla::sinsemilla::{
     i2lebsp_k, HashDomain, L_ORCHARD_MERKLE, MERKLE_CRH_PERSONALIZATION,
 };
 

@@ -1,4 +1,4 @@
-use ZKHash::{
+use zkhash::{
     fields::{st::FpST, utils},
     reinforced_concrete_st::{
         reinforced_concrete_st::ReinforcedConcreteSt,

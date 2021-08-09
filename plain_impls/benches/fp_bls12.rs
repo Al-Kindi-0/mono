@@ -1,7 +1,7 @@
 use criterion::{black_box, criterion_group, criterion_main, Criterion};
 use ff::PrimeField;
 use rand::{thread_rng, Rng};
-use ZKHash::fields::{bls12::FpBLS12, utils};
+use zkhash::fields::{bls12::FpBLS12, utils};
 
 type Scalar = FpBLS12;
 

@@ -12,7 +12,7 @@ Please use the following BibTeX entry to cite our work in academic papers.
 
 ```tex
 @misc{HashZKP,
-  title     = {Hash functions for Zero-Knowledge applications Zoo},
+  title = {Hash functions for Zero-Knowledge applications Zoo},
   howpublished = {\url{https://extgit.iaik.tugraz.at/krypto/zkfriendlyhashzoo}},
   month = aug,
   year = 2021,

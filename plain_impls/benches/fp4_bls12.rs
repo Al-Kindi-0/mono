@@ -1,6 +1,6 @@
 use criterion::{black_box, criterion_group, criterion_main, Criterion};
 use rand::{thread_rng, Rng};
-use ZKHash::fields::{bls12::FpBLS12, utils4};
+use zkhash::fields::{bls12::FpBLS12, utils4};
 
 type Scalar = FpBLS12;
 
