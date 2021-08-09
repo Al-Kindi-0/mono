@@ -1,5 +1,5 @@
 [package]
-name = "tplonk"
+name = "ZKHash"
 version = "0.1.0"
 authors = ["Roman Walch <roman.walch@iaik.tugraz.at>"]
 description = "Rust implementaiton of the ReinforcedConcrete permutation"

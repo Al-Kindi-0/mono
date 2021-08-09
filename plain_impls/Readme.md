@@ -35,17 +35,3 @@ Here we give benchmarks for hashing input sizes of 512-bit (i.e., two field elem
 | Blake2b            |   245.1 | -       | -       | -       |
 | Blake2s            |   219.5 | -       | -       | -       |
 | SHA3-256           |   392.3 | -       | -       | -       |
-
-## Citing our work
-
-Please use the following BibTeX entry to cite our work in academic papers.
-
-```tex
-@misc{HashZKP,
-  author    = {Roman Walch},
-  title     = {Hash functions for Zero-Knowledge applications},
-  howpublished = {\url{http://todo.org}},
-  month = jul,
-  year = 2021,
-  note = {IAIK, Graz University of Technology},
-}

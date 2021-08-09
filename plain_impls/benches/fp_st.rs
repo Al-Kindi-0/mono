@@ -1,7 +1,7 @@
 use criterion::{black_box, criterion_group, criterion_main, Criterion};
 use ff::PrimeField;
 use rand::{thread_rng, Rng};
-use tplonk::fields::{st::FpST, utils};
+use ZKHash::fields::{st::FpST, utils};
 
 type Scalar = FpST;
 

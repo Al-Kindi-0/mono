@@ -1,14 +1,13 @@
-use tplonk::{
-    fields::{st::FpST, utils},
-    reinforced_concrete_st::{
-        reinforced_concrete_st::ReinforcedConcreteSt,
-        reinforced_concrete_st_instances::RC_ST_PARAMS,
+use ZKHash::{
+    fields::{bls12::FpBLS12, utils},
+    reinforced_concrete::{
+        reinforced_concrete::ReinforcedConcrete, reinforced_concrete_instances::RC_BLS_PARAMS,
     },
 };
-type Scalar = FpST;
+type Scalar = FpBLS12;
 
 fn perm_example() -> [Scalar; 3] {
-    let rc = ReinforcedConcreteSt::new(&RC_ST_PARAMS);
+    let rc = ReinforcedConcrete::new(&RC_BLS_PARAMS);
 
     println!("Sample input");
     let input: [Scalar; 3] = [
@@ -22,7 +21,7 @@ fn perm_example() -> [Scalar; 3] {
 }
 
 fn hash_example() -> Scalar {
-    let rc = ReinforcedConcreteSt::new(&RC_ST_PARAMS);
+    let rc = ReinforcedConcrete::new(&RC_BLS_PARAMS);
 
     println!("Sample input");
     let input1 = utils::random_scalar(true);
@@ -33,7 +32,7 @@ fn hash_example() -> Scalar {
 }
 
 fn main() {
-    println!("ReinforcedConcrete ST Example");
+    println!("ReinforcedConcrete BLS12 Example");
     perm_example();
     hash_example();
 }
