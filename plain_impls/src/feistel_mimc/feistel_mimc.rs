@@ -50,11 +50,10 @@ impl<F: PrimeField> FeistelMimc<F> {
     }
 
     pub fn hash_two(&self, input1: &F, input2: &F) -> F {
-        let mut perm_in = [input1.to_owned(), F::zero()];
-        let perm_out = self.permutation(&perm_in);
-        perm_in[0] = perm_out[0];
-        perm_in[0].add_assign(input2);
-        self.permutation(&perm_in)[0]
+        let perm_in = [input1.to_owned(), F::zero()];
+        let mut perm_out = self.permutation(&perm_in);
+        perm_out[0].add_assign(input2);
+        self.permutation(&perm_out)[0]
     }
 }
 
