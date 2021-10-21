@@ -5,6 +5,7 @@ This repository contains several Rust implementations of different hash function
 The repository already contains the following implementations:
 
 - `plain_impls` contains a comparison of the plain performance of various hash functions.
+- `bounties` contains toy instances and implementations of some hash functions used for the [Cryptanalysis Bounties](https://www.zkhashbounties.info/).
 
 ## Citing our work
 
