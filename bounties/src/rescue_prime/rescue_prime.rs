@@ -118,29 +118,27 @@ mod rescue_prime_kats {
         let rescue = RescuePrime::new(&RESCUE_PRIME_PARAMS_EASY1);
         let input: Vec<Scalar> = vec![Scalar::zero(), Scalar::one(), utils::from_u64::<Scalar>(2)];
         let perm = rescue.permutation(&input);
-        assert_eq!(perm[0], from_hex("0x9775230f09921974").unwrap());
-        assert_eq!(perm[1], from_hex("0x04b677d2493fe1d5").unwrap(),);
-        assert_eq!(perm[2], from_hex("0x4015ef9a4c3afd18").unwrap(),);
+        assert_eq!(perm[0], from_hex("0xeb3c888655db7d7d").unwrap());
+        assert_eq!(perm[1], from_hex("0xc76fcb221ca5a1f5").unwrap(),);
+        assert_eq!(perm[2], from_hex("0xfb46c8a3f0d58087").unwrap(),);
     }
 
     #[test]
     fn easy2_kats() {
         let rescue = RescuePrime::new(&RESCUE_PRIME_PARAMS_EASY2);
-        let input: Vec<Scalar> = vec![Scalar::zero(), Scalar::one(), utils::from_u64::<Scalar>(2)];
+        let input: Vec<Scalar> = vec![Scalar::zero(), Scalar::one()];
         let perm = rescue.permutation(&input);
-        assert_eq!(perm[0], from_hex("0x469a02719e3ad1a4").unwrap());
-        assert_eq!(perm[1], from_hex("0xd0e7e76477e414da").unwrap(),);
-        assert_eq!(perm[2], from_hex("0xfcd1cb836abf8799").unwrap(),);
+        assert_eq!(perm[0], from_hex("0x8bc03c0e0c1e9eb3").unwrap());
+        assert_eq!(perm[1], from_hex("0x8056ff8150590045").unwrap(),);
     }
 
     #[test]
     fn medium_kats() {
         let rescue = RescuePrime::new(&RESCUE_PRIME_PARAMS_MEDIUM);
-        let input: Vec<Scalar> = vec![Scalar::zero(), Scalar::one(), utils::from_u64::<Scalar>(2)];
+        let input: Vec<Scalar> = vec![Scalar::zero(), Scalar::one()];
         let perm = rescue.permutation(&input);
-        assert_eq!(perm[0], from_hex("0xa51fd5a1b81ee239").unwrap());
-        assert_eq!(perm[1], from_hex("0x6f86f6ad1129cfc9").unwrap(),);
-        assert_eq!(perm[2], from_hex("0xa93b46cb1310031e").unwrap(),);
+        assert_eq!(perm[0], from_hex("0x14ba297bfe1ca063").unwrap());
+        assert_eq!(perm[1], from_hex("0xdaa72951b79bc857").unwrap(),);
     }
 
     #[test]
@@ -148,18 +146,17 @@ mod rescue_prime_kats {
         let rescue = RescuePrime::new(&RESCUE_PRIME_PARAMS_HARD1);
         let input: Vec<Scalar> = vec![Scalar::zero(), Scalar::one(), utils::from_u64::<Scalar>(2)];
         let perm = rescue.permutation(&input);
-        assert_eq!(perm[0], from_hex("0xb0aa37a1a00626a2").unwrap());
-        assert_eq!(perm[1], from_hex("0xb8865d92a8bb736f").unwrap(),);
-        assert_eq!(perm[2], from_hex("0xa5b5a8b00c10395a").unwrap(),);
+        assert_eq!(perm[0], from_hex("0x6cb9703b238c9c2b").unwrap());
+        assert_eq!(perm[1], from_hex("0x36078bffce602399").unwrap(),);
+        assert_eq!(perm[2], from_hex("0x809e9567e03037ed").unwrap(),);
     }
 
     #[test]
     fn hard2_kats() {
         let rescue = RescuePrime::new(&RESCUE_PRIME_PARAMS_HARD2);
-        let input: Vec<Scalar> = vec![Scalar::zero(), Scalar::one(), utils::from_u64::<Scalar>(2)];
+        let input: Vec<Scalar> = vec![Scalar::zero(), Scalar::one()];
         let perm = rescue.permutation(&input);
-        assert_eq!(perm[0], from_hex("0x03890b141a2ea2c6").unwrap());
-        assert_eq!(perm[1], from_hex("0x562d54deec652cb3").unwrap(),);
-        assert_eq!(perm[2], from_hex("0x8d7be2b0a0f3d4bf").unwrap(),);
+        assert_eq!(perm[0], from_hex("0x3a4fc00d47d18c87").unwrap());
+        assert_eq!(perm[1], from_hex("0x53b831117922eb0b").unwrap(),);
     }
 }

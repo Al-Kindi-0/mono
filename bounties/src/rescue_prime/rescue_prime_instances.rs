@@ -9,6 +9,16 @@ use std::sync::Arc;
 type Scalar = Fp;
 
 lazy_static! {
+    pub static ref MDS2: Vec<Vec<Scalar>> = vec![
+        vec![
+            from_hex("0xffffffffffffffc3").unwrap(),
+            from_hex("0x0000000000000003").unwrap(),
+        ],
+        vec![
+            from_hex("0xffffffffffffffbf").unwrap(),
+            from_hex("0x0000000000000007").unwrap(),
+        ],
+    ];
     pub static ref MDS3: Vec<Vec<Scalar>> = vec![
         vec![
             from_hex("0x0000000000000008").unwrap(),
@@ -28,432 +38,280 @@ lazy_static! {
     ];
     pub static ref RC_EASY1: Vec<Vec<Scalar>> = vec![
         vec![
-            from_hex("0x9642ced987a5e956").unwrap(),
-            from_hex("0x96af74a754907eb3").unwrap(),
-            from_hex("0xf2c1c678c7917afb").unwrap(),
+            from_hex("0x84ed89ef58ea85f6").unwrap(),
+            from_hex("0x6445f469b0c60e48").unwrap(),
+            from_hex("0x5feebcf620670329").unwrap(),
         ],
         vec![
-            from_hex("0x2eea3e7733591389").unwrap(),
-            from_hex("0x511b33200701ac4f").unwrap(),
-            from_hex("0x8ea396b1840f22c0").unwrap(),
+            from_hex("0x197c83c5a650ff7f").unwrap(),
+            from_hex("0xd03c47450ecc2c8d").unwrap(),
+            from_hex("0x15e3e44b3edfb4d3").unwrap(),
         ],
         vec![
-            from_hex("0x3b90249b4bf24ea7").unwrap(),
-            from_hex("0xad0d470de692bc6f").unwrap(),
-            from_hex("0x74d56d5d299174a8").unwrap(),
+            from_hex("0x6e40a4c272145b7a").unwrap(),
+            from_hex("0x9d764479eed78273").unwrap(),
+            from_hex("0xc968f498ba55833a").unwrap(),
         ],
         vec![
-            from_hex("0x77df94abaa1fab22").unwrap(),
-            from_hex("0x44584d3b519f7d4e").unwrap(),
-            from_hex("0xfc2d7dedd7311fb0").unwrap(),
+            from_hex("0xc2b55011a016e09c").unwrap(),
+            from_hex("0x84aa602c2613bcd4").unwrap(),
+            from_hex("0x1565b62686ac979c").unwrap(),
         ],
         vec![
-            from_hex("0xc7be54027898a060").unwrap(),
-            from_hex("0xd6efade14a65971e").unwrap(),
-            from_hex("0xe9203d7c3a56db5b").unwrap(),
+            from_hex("0xa9ea4e3e9228f8fd").unwrap(),
+            from_hex("0x81351e88a528ccb3").unwrap(),
+            from_hex("0xe100321d935a283e").unwrap(),
         ],
         vec![
-            from_hex("0x57c17438271ebbe8").unwrap(),
-            from_hex("0xb40ad7bf50b7c46f").unwrap(),
-            from_hex("0xff00dabf1e5a2584").unwrap(),
+            from_hex("0x7746f4a3be3a4ea7").unwrap(),
+            from_hex("0x4d49397001675f90").unwrap(),
+            from_hex("0x5a216614d9035429").unwrap(),
         ],
         vec![
-            from_hex("0x299cda6b081218b1").unwrap(),
-            from_hex("0xe750b5bea28b9ab3").unwrap(),
-            from_hex("0x42f250b5d8857a99").unwrap(),
+            from_hex("0x03e5d1b3e71aecfc").unwrap(),
+            from_hex("0x54ac7f3f5f5d24e8").unwrap(),
+            from_hex("0x2506ef1199fffe63").unwrap(),
         ],
         vec![
-            from_hex("0x48f14ac30216eb79").unwrap(),
-            from_hex("0x82cf03ba9984b894").unwrap(),
-            from_hex("0x27129839ac0add09").unwrap(),
-        ],
-        vec![
-            from_hex("0x118123ff2e247c9d").unwrap(),
-            from_hex("0xb51445eefa2f84b0").unwrap(),
-            from_hex("0x178449de42e34664").unwrap(),
-        ],
-        vec![
-            from_hex("0x0fb83eaabff9db1b").unwrap(),
-            from_hex("0xe9fb8a069c6771ea").unwrap(),
-            from_hex("0xa50f87748412fbd1").unwrap(),
-        ],
-        vec![
-            from_hex("0x9eea846d9ba8369b").unwrap(),
-            from_hex("0x939c338cd56816f7").unwrap(),
-            from_hex("0xd98f489902a76467").unwrap(),
-        ],
-        vec![
-            from_hex("0x7c24074ad5352f7f").unwrap(),
-            from_hex("0x42a292ec13a56c1b").unwrap(),
-            from_hex("0xab42dce58e1f340f").unwrap(),
+            from_hex("0x95a210cb53ffbf22").unwrap(),
+            from_hex("0xc940fed88817101c").unwrap(),
+            from_hex("0xa7d2a2b29183b542").unwrap(),
         ],
     ];
     pub static ref RC_EASY2: Vec<Vec<Scalar>> = vec![
         vec![
-            from_hex("0x351760a7e420587c").unwrap(),
-            from_hex("0x4e17d425e14e2685").unwrap(),
-            from_hex("0xecc3901cb6d13ba7").unwrap(),
+            from_hex("0xe99efb4501735177").unwrap(),
+            from_hex("0xf8fb92a1e2696cf7").unwrap(),
         ],
         vec![
-            from_hex("0xdf4bd5b362533aa1").unwrap(),
-            from_hex("0xba8b08cc62c486b4").unwrap(),
-            from_hex("0x8b0d057e99d5b05b").unwrap(),
+            from_hex("0xf599b466d1b6ab6d").unwrap(),
+            from_hex("0xf8728548533d0edb").unwrap(),
         ],
         vec![
-            from_hex("0xe920d10ea340e773").unwrap(),
-            from_hex("0xed29a29f79483b9d").unwrap(),
-            from_hex("0x3ec7e12c9c40351f").unwrap(),
+            from_hex("0x609b9177f613e709").unwrap(),
+            from_hex("0x5b69f866c8c98807").unwrap(),
         ],
         vec![
-            from_hex("0x47815e9e960702e4").unwrap(),
-            from_hex("0x57c10466c59ef496").unwrap(),
-            from_hex("0x6b0fe404b754d6c6").unwrap(),
+            from_hex("0x74fe196576c2b28c").unwrap(),
+            from_hex("0xca26ef9fdc6adba6").unwrap(),
         ],
         vec![
-            from_hex("0x1b8611edbe1cfa84").unwrap(),
-            from_hex("0xa8e0cb28d22a5fa4").unwrap(),
-            from_hex("0xd71cb452a5341702").unwrap(),
+            from_hex("0xf9ff62881da82d65").unwrap(),
+            from_hex("0xc8f322715916db90").unwrap(),
         ],
         vec![
-            from_hex("0x2bbc121a0c5661a6").unwrap(),
-            from_hex("0x7f069814983e6b88").unwrap(),
-            from_hex("0x8c81d0062e50b673").unwrap(),
+            from_hex("0x046b1e95e6213637").unwrap(),
+            from_hex("0xcf8d73c55b061b75").unwrap(),
         ],
         vec![
-            from_hex("0x664c022086b3cce5").unwrap(),
-            from_hex("0x9aef9bf66a70084d").unwrap(),
-            from_hex("0x183d5c2654a5e23d").unwrap(),
+            from_hex("0x59fa9c17e66b184a").unwrap(),
+            from_hex("0xdaf0a48359d97e3b").unwrap(),
         ],
         vec![
-            from_hex("0xc35e647378ebc033").unwrap(),
-            from_hex("0x086d739477554e40").unwrap(),
-            from_hex("0x548d3eb00632c7bc").unwrap(),
+            from_hex("0x8b12c8b7f70556f3").unwrap(),
+            from_hex("0x29595af168b0ffb1").unwrap(),
         ],
         vec![
-            from_hex("0x9afe7c47d9b03626").unwrap(),
-            from_hex("0xf8bd3302a21bebfc").unwrap(),
-            from_hex("0x7e6201f549513f0a").unwrap(),
+            from_hex("0xe20719536a330f06").unwrap(),
+            from_hex("0x4ac039cf359ec6f1").unwrap(),
         ],
         vec![
-            from_hex("0xae16ae9b20ea3f31").unwrap(),
-            from_hex("0xca4f7cb415955122").unwrap(),
-            from_hex("0xcb3eacb6a3cf9aa1").unwrap(),
+            from_hex("0xdf7c6766ac017295").unwrap(),
+            from_hex("0x32aa4f18ea71c95b").unwrap(),
         ],
         vec![
-            from_hex("0x5b6d9d85c8c2e284").unwrap(),
-            from_hex("0xe5abe723ad2aa3b6").unwrap(),
-            from_hex("0xe59ae579e575912d").unwrap(),
+            from_hex("0xa9dad5e36ebe1994").unwrap(),
+            from_hex("0xcf5011ef1553fa85").unwrap(),
         ],
         vec![
-            from_hex("0x8ea3daddbc422d47").unwrap(),
-            from_hex("0x4957fd69aed69ba5").unwrap(),
-            from_hex("0x19386b0f955f845a").unwrap(),
-        ],
-        vec![
-            from_hex("0x1b510abc5143e8d8").unwrap(),
-            from_hex("0xceac3f224e65e787").unwrap(),
-            from_hex("0xbb939165bae119a3").unwrap(),
-        ],
-        vec![
-            from_hex("0x11d57738f4427125").unwrap(),
-            from_hex("0x95f3c41c101e6b5c").unwrap(),
-            from_hex("0xe3ab671e65878411").unwrap(),
+            from_hex("0xfcdfe95da833e9a9").unwrap(),
+            from_hex("0x0f1d65d86b1afb27").unwrap(),
         ],
     ];
     pub static ref RC_MEDIUM: Vec<Vec<Scalar>> = vec![
         vec![
-            from_hex("0x3a66f71b08f1a8ab").unwrap(),
-            from_hex("0x3a787506f816e3f8").unwrap(),
-            from_hex("0xa3d3970357f5bb3f").unwrap(),
+            from_hex("0x8de01824b6d06217").unwrap(),
+            from_hex("0x90cabd996fd374eb").unwrap(),
         ],
         vec![
-            from_hex("0xdac23dd028a20860").unwrap(),
-            from_hex("0xab9e94d20700120b").unwrap(),
-            from_hex("0x2b3355021554282d").unwrap(),
+            from_hex("0x5c6c8dbae2122d86").unwrap(),
+            from_hex("0x7c4f763ba72369d4").unwrap(),
         ],
         vec![
-            from_hex("0x263318b64371c058").unwrap(),
-            from_hex("0xc2d75cd2b26390aa").unwrap(),
-            from_hex("0xc47de5e31064bdef").unwrap(),
+            from_hex("0xf70bb7f0cfb3864d").unwrap(),
+            from_hex("0x8776568b676ee1c7").unwrap(),
         ],
         vec![
-            from_hex("0xc2cf7b0ab99680fb").unwrap(),
-            from_hex("0xa87fd90866c517cd").unwrap(),
-            from_hex("0x4a58c24130fc611c").unwrap(),
+            from_hex("0x94929c65acb952a2").unwrap(),
+            from_hex("0x4cc081ca560891bc").unwrap(),
         ],
         vec![
-            from_hex("0x6648f919de96ab2a").unwrap(),
-            from_hex("0xe2226bf64a95505c").unwrap(),
-            from_hex("0x6f975a0e322d507a").unwrap(),
+            from_hex("0xd3f9f290d2ebbce9").unwrap(),
+            from_hex("0x9f81c420013ac696").unwrap(),
         ],
         vec![
-            from_hex("0xc224a57b415b4ac8").unwrap(),
-            from_hex("0xdada67837a227701").unwrap(),
-            from_hex("0x8549ab7731e1321c").unwrap(),
+            from_hex("0xb2b66e0e37701546").unwrap(),
+            from_hex("0x3cfac108e729363a").unwrap(),
         ],
         vec![
-            from_hex("0x46b5f00c4deddfc0").unwrap(),
-            from_hex("0x5114b1f55e3d03e8").unwrap(),
-            from_hex("0x150ec515ac159809").unwrap(),
+            from_hex("0xee73bfe53838a698").unwrap(),
+            from_hex("0xcffb8357c410a71e").unwrap(),
         ],
         vec![
-            from_hex("0x785884b3ec9a4583").unwrap(),
-            from_hex("0x666d0d8921646a45").unwrap(),
-            from_hex("0x1379b17eba64d56c").unwrap(),
+            from_hex("0x4b8513bd72ed6aba").unwrap(),
+            from_hex("0x8d6cae9832b09dd9").unwrap(),
         ],
         vec![
-            from_hex("0x593ab9698351ebb3").unwrap(),
-            from_hex("0x2ec3f57317ae530e").unwrap(),
-            from_hex("0x1886b70bde041c23").unwrap(),
+            from_hex("0x9aeb974ce077669b").unwrap(),
+            from_hex("0xce9a5b0570dd73a6").unwrap(),
         ],
         vec![
-            from_hex("0xa0d26747f84c4889").unwrap(),
-            from_hex("0xc75d0c4f8ab4d0f0").unwrap(),
-            from_hex("0xc22dadb91fc975c6").unwrap(),
+            from_hex("0x553bf0c5fb46d348").unwrap(),
+            from_hex("0xf72eab0f508458b6").unwrap(),
         ],
         vec![
-            from_hex("0x562cef878b0027fa").unwrap(),
-            from_hex("0x83edb54bc842380c").unwrap(),
-            from_hex("0xebc2647612e8a42b").unwrap(),
+            from_hex("0xb87b3dff9b12ff29").unwrap(),
+            from_hex("0x2b8b2c740a0e3c94").unwrap(),
         ],
         vec![
-            from_hex("0x5be32cd4f63388ea").unwrap(),
-            from_hex("0xbf2f3dab21f98adc").unwrap(),
-            from_hex("0x746c04d3c02ca39f").unwrap(),
+            from_hex("0xe12d1ee11a03319e").unwrap(),
+            from_hex("0x2e52e988a7c401bc").unwrap(),
         ],
         vec![
-            from_hex("0x047682f3e7f13c20").unwrap(),
-            from_hex("0xe632be747d504eb0").unwrap(),
-            from_hex("0x82c77ec2b0acabab").unwrap(),
+            from_hex("0xfe1bdcc23589b785").unwrap(),
+            from_hex("0x31c9ca0abc28185f").unwrap(),
         ],
         vec![
-            from_hex("0x6731d6f901be21c9").unwrap(),
-            from_hex("0x99c5176bc90eaf82").unwrap(),
-            from_hex("0xba90d4d30fa3d1bb").unwrap(),
-        ],
-        vec![
-            from_hex("0x079855c4a592d786").unwrap(),
-            from_hex("0x5fff83ab73509e8e").unwrap(),
-            from_hex("0x3963f98e30361e14").unwrap(),
-        ],
-        vec![
-            from_hex("0xcc7ade35c9cf4730").unwrap(),
-            from_hex("0xeb256d9df9b1651b").unwrap(),
-            from_hex("0xaa52ed972e40f6b8").unwrap(),
+            from_hex("0xcfa61e6f9e7d09f6").unwrap(),
+            from_hex("0x3e91e51c51c80e6b").unwrap(),
         ],
     ];
     pub static ref RC_HARD1: Vec<Vec<Scalar>> = vec![
         vec![
-            from_hex("0x85a7214c111ea323").unwrap(),
-            from_hex("0x195ee19695e6b838").unwrap(),
-            from_hex("0x748dde2033a9c720").unwrap(),
+            from_hex("0x816ea96e4bd1137a").unwrap(),
+            from_hex("0x4906b37b9a7f6b03").unwrap(),
+            from_hex("0xdef4b797d4c47fa8").unwrap(),
         ],
         vec![
-            from_hex("0x720bdbc102ef661a").unwrap(),
-            from_hex("0xd2b3f75b658bf5c7").unwrap(),
-            from_hex("0xb4e24a0f1841d1b1").unwrap(),
+            from_hex("0x81f1cfbbae679968").unwrap(),
+            from_hex("0x2e4597e9b486c294").unwrap(),
+            from_hex("0x3d02b3cbc042dfdf").unwrap(),
         ],
         vec![
-            from_hex("0xfa23a50d50d9a69e").unwrap(),
-            from_hex("0x1a5bb37856d0beb4").unwrap(),
-            from_hex("0xebd66dca65bdfd1d").unwrap(),
+            from_hex("0x03dd9933c03f7748").unwrap(),
+            from_hex("0x1adf7d1a22993c72").unwrap(),
+            from_hex("0xa2322b1ac39179a8").unwrap(),
         ],
         vec![
-            from_hex("0xb7a38378904fde96").unwrap(),
-            from_hex("0xb6cc6adc92095c1e").unwrap(),
-            from_hex("0x0733fe83326bd095").unwrap(),
+            from_hex("0xc75b45d2bde8212a").unwrap(),
+            from_hex("0xf7877e62acfd65cd").unwrap(),
+            from_hex("0x109d2660c4618920").unwrap(),
         ],
         vec![
-            from_hex("0xe2157d692d92a43c").unwrap(),
-            from_hex("0x1798028f0be5bde3").unwrap(),
-            from_hex("0x554eccd2b2d98d61").unwrap(),
+            from_hex("0x1ecdbc609328a776").unwrap(),
+            from_hex("0x98ccb8cb7afdc3f0").unwrap(),
+            from_hex("0xf458d8364b4b76fb").unwrap(),
         ],
         vec![
-            from_hex("0xdcdc9e1e615534e8").unwrap(),
-            from_hex("0x646d927ed0ea8c56").unwrap(),
-            from_hex("0x9394f26b50fb0602").unwrap(),
+            from_hex("0x119714be077a0515").unwrap(),
+            from_hex("0x2a1ec04d801ae600").unwrap(),
+            from_hex("0xa080817b1e4b5273").unwrap(),
         ],
         vec![
-            from_hex("0x4fd1ba712ed82184").unwrap(),
-            from_hex("0x59bb57ce57e4c060").unwrap(),
-            from_hex("0xadd31d1f938d8d3d").unwrap(),
+            from_hex("0xec2242ec8e76eb4e").unwrap(),
+            from_hex("0x3bc1370d5b5e4eb6").unwrap(),
+            from_hex("0x42a8c84e98cb5b29").unwrap(),
         ],
         vec![
-            from_hex("0xec3da1435e84774c").unwrap(),
-            from_hex("0xb1be6ac131adf172").unwrap(),
-            from_hex("0xfac86ac017b0d7e4").unwrap(),
+            from_hex("0x3a4cbee5ee726bd5").unwrap(),
+            from_hex("0x2f90602af243a30d").unwrap(),
+            from_hex("0x38197cf23ae3384e").unwrap(),
         ],
         vec![
-            from_hex("0x03980b94846a7b8e").unwrap(),
-            from_hex("0x154dc9101c439254").unwrap(),
-            from_hex("0xdf4faab9dca2c020").unwrap(),
+            from_hex("0xcbf987193d838b04").unwrap(),
+            from_hex("0x1c9b35dfd5368398").unwrap(),
+            from_hex("0x545c215df528a1aa").unwrap(),
         ],
         vec![
-            from_hex("0xaa0c645b027c4626").unwrap(),
-            from_hex("0x925a67c24c92f9d4").unwrap(),
-            from_hex("0x95d72182728205b9").unwrap(),
-        ],
-        vec![
-            from_hex("0x0d9248821453ab10").unwrap(),
-            from_hex("0x6390a32fd4f0ddc9").unwrap(),
-            from_hex("0x84e58d58841250ef").unwrap(),
-        ],
-        vec![
-            from_hex("0x1edd6c80d9ebef3a").unwrap(),
-            from_hex("0x554ea12d276f4b4b").unwrap(),
-            from_hex("0x55717553d78172ec").unwrap(),
-        ],
-        vec![
-            from_hex("0x73d5266881e5d54f").unwrap(),
-            from_hex("0xdd9367b460e03f53").unwrap(),
-            from_hex("0x36b8546a5de7a570").unwrap(),
-        ],
-        vec![
-            from_hex("0x8517a546ae5aae88").unwrap(),
-            from_hex("0x3e7f362e7b812cf7").unwrap(),
-            from_hex("0x9f28d9513795a145").unwrap(),
-        ],
-        vec![
-            from_hex("0x91a0b9067822553a").unwrap(),
-            from_hex("0x5cf716fd824177a1").unwrap(),
-            from_hex("0x6935d410665b75b2").unwrap(),
-        ],
-        vec![
-            from_hex("0xbe01095f3bfb8d2a").unwrap(),
-            from_hex("0xde014fbae3c3df6c").unwrap(),
-            from_hex("0xff85424be3af309b").unwrap(),
-        ],
-        vec![
-            from_hex("0x1723d5a4e7198193").unwrap(),
-            from_hex("0xce68337297f97293").unwrap(),
-            from_hex("0xa55928c9922def69").unwrap(),
-        ],
-        vec![
-            from_hex("0xe7307b1249b81f44").unwrap(),
-            from_hex("0xe4449f018accd197").unwrap(),
-            from_hex("0x3e2fcaf815632722").unwrap(),
+            from_hex("0xc0a53bdfe1c1e2a3").unwrap(),
+            from_hex("0xb49f9fe57cde7615").unwrap(),
+            from_hex("0xe85930b444945988").unwrap(),
         ],
     ];
     pub static ref RC_HARD2: Vec<Vec<Scalar>> = vec![
         vec![
-            from_hex("0xbc29474d1424540b").unwrap(),
-            from_hex("0x9cbd494b3c578ebf").unwrap(),
-            from_hex("0xe1f5a4fdb3c6abc3").unwrap(),
+            from_hex("0x6ff649261bd5b8ec").unwrap(),
+            from_hex("0x2c25306a69d5b7e6").unwrap(),
         ],
         vec![
-            from_hex("0x01529890851d02c9").unwrap(),
-            from_hex("0xd9d4066fd70cfc4f").unwrap(),
-            from_hex("0xac8993eec3ebd049").unwrap(),
+            from_hex("0xbab73ff86688e64b").unwrap(),
+            from_hex("0x6e95acb9a21c4859").unwrap(),
         ],
         vec![
-            from_hex("0x138d76098727f6b8").unwrap(),
-            from_hex("0xaf603139ed202b87").unwrap(),
-            from_hex("0xdf6fb78f7beac81a").unwrap(),
+            from_hex("0xbdea759ce6d13d45").unwrap(),
+            from_hex("0x7e3c89240f573285").unwrap(),
         ],
         vec![
-            from_hex("0x22ec6daa308a409c").unwrap(),
-            from_hex("0x5e6e5729784b8e7c").unwrap(),
-            from_hex("0x721274b5f0ebcede").unwrap(),
+            from_hex("0x464854e5e380a64a").unwrap(),
+            from_hex("0xce7275148f077a00").unwrap(),
         ],
         vec![
-            from_hex("0xba7a2100d5e209fe").unwrap(),
-            from_hex("0x4f76bc5e118be939").unwrap(),
-            from_hex("0x0dbafba1c6b9c532").unwrap(),
+            from_hex("0xf6e1c7aaad675b88").unwrap(),
+            from_hex("0xf01d82f6366b3dc8").unwrap(),
         ],
         vec![
-            from_hex("0xc47520e59ddd7c8f").unwrap(),
-            from_hex("0x26b3182fa97e4d25").unwrap(),
-            from_hex("0xed86dcff2bb6326b").unwrap(),
+            from_hex("0xd5728f0d06e39c31").unwrap(),
+            from_hex("0x81d6f3c14dd30c20").unwrap(),
         ],
         vec![
-            from_hex("0x534a4c18334c106a").unwrap(),
-            from_hex("0xc9be4c3e3c177f84").unwrap(),
-            from_hex("0xd7b5632714896062").unwrap(),
+            from_hex("0xe1be979812269535").unwrap(),
+            from_hex("0x480b7484ef86538a").unwrap(),
         ],
         vec![
-            from_hex("0x58013c7e8a2bb5ab").unwrap(),
-            from_hex("0xba867e452012ff2e").unwrap(),
-            from_hex("0x450d0c3835f7239c").unwrap(),
+            from_hex("0xf7041d992b4a8568").unwrap(),
+            from_hex("0x16ea6478167d033f").unwrap(),
         ],
         vec![
-            from_hex("0x7f26acc8d362a1bf").unwrap(),
-            from_hex("0x748d6fff9c3f6c22").unwrap(),
-            from_hex("0x28990564ec14478a").unwrap(),
+            from_hex("0x12b2a1139f27262a").unwrap(),
+            from_hex("0xa133749e9d576b6d").unwrap(),
         ],
         vec![
-            from_hex("0xca0306c688fc3188").unwrap(),
-            from_hex("0x1c3a4b183388e819").unwrap(),
-            from_hex("0x2df970d6a0650b20").unwrap(),
+            from_hex("0xda640d85ab489437").unwrap(),
+            from_hex("0x42a33ece4d632e33").unwrap(),
         ],
         vec![
-            from_hex("0x07c3b7a746dabd34").unwrap(),
-            from_hex("0x63725c3055565128").unwrap(),
-            from_hex("0x862a06b8d9f518c8").unwrap(),
+            from_hex("0x9693f52b9a4b37e0").unwrap(),
+            from_hex("0x264b8974a16909f4").unwrap(),
         ],
         vec![
-            from_hex("0xd6b90b8fc4987319").unwrap(),
-            from_hex("0xa2b9f9f05d262d90").unwrap(),
-            from_hex("0xe873c7979a6860a0").unwrap(),
+            from_hex("0x64d3080d3dac731a").unwrap(),
+            from_hex("0x15baf4df7cc2727a").unwrap(),
         ],
         vec![
-            from_hex("0xa5137de47ed166e0").unwrap(),
-            from_hex("0xc84ba44028bd038f").unwrap(),
-            from_hex("0xb42812c602e30a22").unwrap(),
+            from_hex("0x43fe37af530b1e6c").unwrap(),
+            from_hex("0x53fcc057c79bd15f").unwrap(),
         ],
         vec![
-            from_hex("0xb9498af4c78e4716").unwrap(),
-            from_hex("0xad7aa795cc37f3cd").unwrap(),
-            from_hex("0x6cca564cf600dc14").unwrap(),
+            from_hex("0xcd1e6d3a0ae387cb").unwrap(),
+            from_hex("0x464aa9a35c714dbf").unwrap(),
         ],
         vec![
-            from_hex("0x9923c69e5f63e11d").unwrap(),
-            from_hex("0x2fca8ebed7a0ab10").unwrap(),
-            from_hex("0x65d7278104275232").unwrap(),
+            from_hex("0xf346be6880e2fcf6").unwrap(),
+            from_hex("0x6a6c31e485bab430").unwrap(),
         ],
         vec![
-            from_hex("0xed6b1fe1bbb45ae0").unwrap(),
-            from_hex("0x5d2d3b45f9e482bf").unwrap(),
-            from_hex("0xf9ce79d7405bd02e").unwrap(),
-        ],
-        vec![
-            from_hex("0xa78e610c42524e6c").unwrap(),
-            from_hex("0x37c7059e685d0666").unwrap(),
-            from_hex("0xe1f3e297ba057b33").unwrap(),
-        ],
-        vec![
-            from_hex("0x93a35e2c3c86cfd9").unwrap(),
-            from_hex("0xe697b375c55a763c").unwrap(),
-            from_hex("0x2f7a086d2b868ece").unwrap(),
-        ],
-        vec![
-            from_hex("0x6792a209a73662ef").unwrap(),
-            from_hex("0xed4e2c09f77c5931").unwrap(),
-            from_hex("0x10fefcdfb3e09358").unwrap(),
-        ],
-        vec![
-            from_hex("0xf9733395de74f755").unwrap(),
-            from_hex("0x8d6e5fa8ea5fd35a").unwrap(),
-            from_hex("0x4b5e7dd88bd448ad").unwrap(),
-        ],
-        vec![
-            from_hex("0xcd38cfeb622323a4").unwrap(),
-            from_hex("0x4986c1da97a5c95c").unwrap(),
-            from_hex("0x68dc29f6df8f8340").unwrap(),
-        ],
-        vec![
-            from_hex("0x2b8dec8a6bf79f64").unwrap(),
-            from_hex("0xa97ba14517e9513a").unwrap(),
-            from_hex("0xfe587ebcf1eff8d5").unwrap(),
+            from_hex("0x784d70023de8aedb").unwrap(),
+            from_hex("0x4dca976d8a5f41af").unwrap(),
         ],
     ];
     pub static ref RESCUE_PRIME_PARAMS_EASY1: Arc<RescuePrimeParams<Scalar>> =
-        Arc::new(RescuePrimeParams::new(3, 3, 6, &MDS3, &RC_EASY1));
+        Arc::new(RescuePrimeParams::new(3, 3, 4, &MDS3, &RC_EASY1));
     pub static ref RESCUE_PRIME_PARAMS_EASY2: Arc<RescuePrimeParams<Scalar>> =
-        Arc::new(RescuePrimeParams::new(3, 3, 7, &MDS3, &RC_EASY2));
+        Arc::new(RescuePrimeParams::new(2, 3, 6, &MDS2, &RC_EASY2));
     pub static ref RESCUE_PRIME_PARAMS_MEDIUM: Arc<RescuePrimeParams<Scalar>> =
-        Arc::new(RescuePrimeParams::new(3, 3, 8, &MDS3, &RC_MEDIUM));
+        Arc::new(RescuePrimeParams::new(2, 3, 7, &MDS2, &RC_MEDIUM));
     pub static ref RESCUE_PRIME_PARAMS_HARD1: Arc<RescuePrimeParams<Scalar>> =
-        Arc::new(RescuePrimeParams::new(3, 3, 9, &MDS3, &RC_HARD1));
+        Arc::new(RescuePrimeParams::new(3, 3, 5, &MDS3, &RC_HARD1));
     pub static ref RESCUE_PRIME_PARAMS_HARD2: Arc<RescuePrimeParams<Scalar>> =
-        Arc::new(RescuePrimeParams::new(3, 3, 11, &MDS3, &RC_HARD2));
+        Arc::new(RescuePrimeParams::new(2, 3, 8, &MDS2, &RC_HARD2));
 }

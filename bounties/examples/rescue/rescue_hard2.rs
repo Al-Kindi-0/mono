@@ -16,17 +16,12 @@ fn main() {
     println!("N = {}", params.get_rounds());
 
     // insert your solution here:
-    let solution1: Scalar = from_hex("0x0000000000000000").unwrap();
-    let solution2: Scalar = from_hex("0x0000000000000000").unwrap();
+    let solution: Scalar = from_hex("0x0000000000000000").unwrap();
 
     let input = if RANDOM_INPUT {
-        [
-            utils::random_scalar(true),
-            utils::random_scalar(true),
-            Scalar::zero(),
-        ]
+        [utils::random_scalar(true), Scalar::zero()]
     } else {
-        [solution1, solution2, Scalar::zero()]
+        [solution, Scalar::zero()]
     };
 
     let output = rescue.permutation(&input);
