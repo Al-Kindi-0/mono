@@ -9,7 +9,6 @@ edition = "2018"
 ff = {package = "ff_ce", version = "0.13", features = ["derive"] }
 rand = "0.4" # held back for ff_ce
 lazy_static = "1.4"
-cfg-if = "1.0"
 sha3 = "0.9"
 
 [[example]]
@@ -71,6 +70,18 @@ path = "examples/feistel_mimc/feistel_mimc_hard1.rs"
 [[example]]
 name = "feistel_mimc_hard2"
 path = "examples/feistel_mimc/feistel_mimc_hard2.rs"
+
+[[example]]
+name = "reinforced_concrete_easy"
+path = "examples/reinforced_concrete/reinforced_concrete_easy.rs"
+
+[[example]]
+name = "reinforced_concrete_medium"
+path = "examples/reinforced_concrete/reinforced_concrete_medium.rs"
+
+[[example]]
+name = "reinforced_concrete_hard"
+path = "examples/reinforced_concrete/reinforced_concrete_hard.rs"
 
 [profile.release]
 lto = true

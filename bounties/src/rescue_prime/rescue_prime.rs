@@ -106,12 +106,12 @@ impl<S: PrimeField> RescuePrime<S> {
 mod rescue_prime_kats {
     use super::*;
 
-    use crate::fields::{field::Fp, utils};
+    use crate::fields::{field64::Fp64, utils};
     use crate::rescue_prime::rescue_prime_instances::*;
 
     use ff::{from_hex, Field};
 
-    type Scalar = Fp;
+    type Scalar = Fp64;
 
     #[test]
     fn easy1_kats() {

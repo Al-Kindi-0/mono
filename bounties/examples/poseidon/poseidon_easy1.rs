@@ -1,10 +1,10 @@
 use ff::{from_hex, Field};
 use zkhash_bounties::{
-    fields::{field::Fp, utils},
+    fields::{field64::Fp64, utils},
     poseidon::{poseidon::Poseidon, poseidon_instances::POSEIDON_PARAMS_EASY1},
 };
 
-type Scalar = Fp;
+type Scalar = Fp64;
 
 static RANDOM_INPUT: bool = false;
 

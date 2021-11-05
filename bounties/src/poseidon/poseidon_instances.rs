@@ -1,12 +1,12 @@
 use super::poseidon_params::PoseidonParams;
 
-use crate::fields::field::Fp;
+use crate::fields::field64::Fp64;
 
 use ff::from_hex;
 use lazy_static::lazy_static;
 use std::sync::Arc;
 
-type Scalar = Fp;
+type Scalar = Fp64;
 
 lazy_static! {
     pub static ref MDS_EASY1: Vec<Vec<Scalar>> = vec![

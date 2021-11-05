@@ -1,17 +1,17 @@
 use std::sync::Arc;
 
-use ff::{PrimeField, SqrtField};
+use ff::PrimeField;
 
 use crate::fields::utils4;
 
 use super::reinforced_concrete_st_params::ReinforcedConcreteStParams;
 
 #[derive(Clone, Debug)]
-pub struct ReinforcedConcreteSt<F: PrimeField + SqrtField> {
+pub struct ReinforcedConcreteSt<F: PrimeField> {
     pub(crate) params: Arc<ReinforcedConcreteStParams<F>>,
 }
 
-impl<F: PrimeField + SqrtField> ReinforcedConcreteSt<F> {
+impl<F: PrimeField> ReinforcedConcreteSt<F> {
     const BIT: usize = 10;
     const LEN: usize = 25;
     const STAGE_SIZE: usize = 6;
@@ -321,7 +321,7 @@ mod reinforced_concrete_st_tests {
 
     lazy_static! {
         static ref RC_ST_P: Arc<ReinforcedConcreteParams<Scalar>> = Arc::new(
-            ReinforcedConcreteParams::new(RC_ST_PARAMS.d, &SI, &RC_ST_PARAMS.sbox)
+            ReinforcedConcreteParams::new(RC_ST_PARAMS.d, &SI, &RC_ST_PARAMS.sbox, &[1, 2, 3, 4])
         );
     }
 
@@ -404,15 +404,15 @@ mod reinforced_concrete_st_tests {
         assert_eq!(perm1, perm2);
         assert_eq!(
             perm1[0],
-            from_hex("0x018b9d5c3d5872857684c9fc2b60804a1a7a51554a5a0448c4feb6e08cc4d1c0").unwrap()
+            from_hex("0x0026b02ce8c46a43773c7b8e2335642224aec1f72d060697faa4c3e99c7b524e").unwrap()
         );
         assert_eq!(
             perm1[1],
-            from_hex("0x00a7c4c835a7c6c32dee2e24553ebd61db26c9e36cd52ff61d18355f9e169976").unwrap(),
+            from_hex("0x0314c340fa9da579d2b3466947836d130616e1ca35f1884ab36ed5a8d2e9212e").unwrap(),
         );
         assert_eq!(
             perm1[2],
-            from_hex("0x00e1369698e9604cddddfeb5a4b473bfca55ba1d5cefe661bd8319c9af086015").unwrap(),
+            from_hex("0x02ebb8984a6b0d773bf79e7b24bb3b722313e9c4e5be7cd36e279ed0d22a918a").unwrap(),
         );
     }
 

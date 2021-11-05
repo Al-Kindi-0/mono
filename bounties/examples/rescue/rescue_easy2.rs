@@ -1,10 +1,10 @@
 use ff::{from_hex, Field};
 use zkhash_bounties::{
-    fields::{field::Fp, utils},
+    fields::{field64::Fp64, utils},
     rescue_prime::{rescue_prime::RescuePrime, rescue_prime_instances::RESCUE_PRIME_PARAMS_EASY2},
 };
 
-type Scalar = Fp;
+type Scalar = Fp64;
 
 static RANDOM_INPUT: bool = false;
 

@@ -1,10 +1,10 @@
 use ff::{from_hex, Field};
 use zkhash_bounties::{
     feistel_mimc::{feistel_mimc::FeistelMimc, feistel_mimc_instances::FM_PARAMS_EASY1},
-    fields::{field::Fp, utils},
+    fields::{field64::Fp64, utils},
 };
 
-type Scalar = Fp;
+type Scalar = Fp64;
 
 static RANDOM_INPUT: bool = false;
 

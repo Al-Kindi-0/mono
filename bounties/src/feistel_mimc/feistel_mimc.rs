@@ -57,11 +57,11 @@ mod feistel_mimc_kats {
     use super::*;
 
     use crate::feistel_mimc::feistel_mimc_instances::*;
-    use crate::fields::field::Fp;
+    use crate::fields::field64::Fp64;
 
     use ff::{from_hex, Field};
 
-    type Scalar = Fp;
+    type Scalar = Fp64;
 
     #[test]
     fn easy1_kats() {

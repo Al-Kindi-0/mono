@@ -12,6 +12,7 @@ lazy_static! {
         679, 703, 688, 691, 702, 703, 697, 698, 695, 701, 701, 701, 699, 694, 701, 694, 700, 688,
         700, 693, 691, 695, 679, 668, 694, 696, 693,
     ];
+    pub static ref BLS12_AB: [u16; 4] = [1,3,2,4];
     pub static ref BLS12_SBOX: Vec<u16> = vec![
         171, 178, 483, 527, 653, 408, 197, 599, 300, 607, 403, 511, 579, 520, 591, 412, 261, 559,
         551, 154, 180, 138, 596, 150, 276, 271, 48, 168, 362, 637, 467, 164, 536, 554, 287, 530,
@@ -51,12 +52,13 @@ lazy_static! {
         623, 190, 523, 515, 576, 141, 228
     ];
     pub static ref RC_BLS_PARAMS: Arc<ReinforcedConcreteParams<FpBLS12>> =
-        Arc::new(ReinforcedConcreteParams::new(5, &BLS12_SI, &BLS12_SBOX));
+        Arc::new(ReinforcedConcreteParams::new(5, &BLS12_SI, &BLS12_SBOX, BLS12_AB.as_ref()));
     // BN256
     pub static ref BN256_SI: Vec<u16> = vec![
         673, 678, 667, 683, 680, 655, 683, 683, 681, 683, 675, 668, 675, 677, 680, 681, 669, 683,
         681, 677, 668, 654, 663, 666, 656, 658, 651
     ];
+    pub static ref BN256_AB: [u16; 4] = [1,3,2,4];
     pub static ref BN256_SBOX: Vec<u16> = vec![
         377, 222, 243, 537, 518, 373, 152, 435, 526, 352, 2, 410, 513, 545, 567, 354, 405, 80, 233,
         261, 49, 240, 568, 74, 131, 349, 146, 278, 330, 372, 43, 432, 247, 583, 105, 203, 637, 307,
@@ -95,5 +97,5 @@ lazy_static! {
         226, 227, 248, 588
     ];
     pub static ref RC_BN_PARAMS: Arc<ReinforcedConcreteParams<FpBN256>> =
-        Arc::new(ReinforcedConcreteParams::new(5, &BN256_SI, &BN256_SBOX));
+        Arc::new(ReinforcedConcreteParams::new(5, &BN256_SI, &BN256_SBOX, BN256_AB.as_ref()));
 }

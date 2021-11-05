@@ -108,8 +108,8 @@ impl<F: PrimeField> ReinforcedConcrete<F> {
         repr.as_mut()[0] = vals[0] as u64;
 
         for (val, s) in vals.iter().zip(self.params.si.iter()).skip(1) {
-            repr = utils::mul_by_single_word::<F>(&repr, *s as u64);
-            repr = utils::add_single_word::<F>(&repr, *val as u64);
+            let tmp = utils::mul_by_single_word::<F>(&repr, *s as u64);
+            repr = utils::add_single_word::<F>(&tmp.0, *val as u64);
         }
         F::from_repr(repr).unwrap()
     }
@@ -166,52 +166,22 @@ impl<F: PrimeField> ReinforcedConcrete<F> {
 }
 
 #[cfg(test)]
-mod reinforced_concrete_tests_bn256 {
-    use ff::{from_hex, Field};
+mod reinforced_concrete_kats {
+    use super::*;
 
     use crate::{
-        fields::bn256::FpBN256, reinforced_concrete::reinforced_concrete_instances::RC_BN_PARAMS,
+        fields::{field48::Fp48, field56::Fp56, field64::Fp64},
+        reinforced_concrete::reinforced_concrete_instances::*,
     };
 
-    type Scalar = FpBN256;
-
-    use super::*;
+    use ff::{from_hex, Field};
 
     static TESTRUNS: usize = 5;
 
     #[test]
-    fn consistent_perm() {
-        let rc = ReinforcedConcrete::new(&RC_BN_PARAMS);
-        for _ in 0..TESTRUNS {
-            let input1: [Scalar; 3] = [
-                utils::random_scalar(true),
-                utils::random_scalar(true),
-                utils::random_scalar(true),
-            ];
-
-            let mut input2: [Scalar; 3];
-            loop {
-                input2 = [
-                    utils::random_scalar(true),
-                    utils::random_scalar(true),
-                    utils::random_scalar(true),
-                ];
-                if input1 != input2 {
-                    break;
-                }
-            }
-
-            let perm1 = rc.permutation(&input1);
-            let perm2 = rc.permutation(&input1);
-            let perm3 = rc.permutation(&input2);
-            assert_eq!(perm1, perm2);
-            assert_ne!(perm1, perm3);
-        }
-    }
-
-    #[test]
-    fn compose() {
-        let rc = ReinforcedConcrete::new(&RC_BN_PARAMS);
+    fn compose48() {
+        type Scalar = Fp48;
+        let rc = ReinforcedConcrete::new(&RC_PARAMS_EASY);
 
         for _ in 0..TESTRUNS {
             let input: Scalar = utils::random_scalar(true);
@@ -222,94 +192,9 @@ mod reinforced_concrete_tests_bn256 {
     }
 
     #[test]
-    fn consistent_hash() {
-        let rc = ReinforcedConcrete::new(&RC_BN_PARAMS);
-        for _ in 0..TESTRUNS {
-            let input1: Scalar = utils::random_scalar(true);
-            let mut input2: Scalar;
-            loop {
-                input2 = utils::random_scalar(true);
-                if input1 != input2 {
-                    break;
-                }
-            }
-            let input3: Scalar = utils::random_scalar(true);
-
-            let h1 = rc.hash(&input1, &input3);
-            let h2 = rc.hash(&input1, &input3);
-            let h3 = rc.hash(&input2, &input3);
-            assert_eq!(h1, h2);
-            assert_ne!(h1, h3);
-        }
-    }
-
-    #[test]
-    fn kats() {
-        let rc = ReinforcedConcrete::new(&RC_BN_PARAMS);
-        let input: [Scalar; 3] = [Scalar::zero(), Scalar::one(), utils::from_u64(2)];
-        let perm = rc.permutation(&input);
-        assert_eq!(
-            perm[0],
-            from_hex("0x2510ddf9405eebaa4d9a4e0a821bffc80ed439355c500985797becf45403e42e").unwrap()
-        );
-        assert_eq!(
-            perm[1],
-            from_hex("0x1e8fd5b981b3b2d1cff86e3d99a9dbed002afdd7a29726de8f4d645d7841eafd").unwrap(),
-        );
-        assert_eq!(
-            perm[2],
-            from_hex("0x2c37d92c6d2b6831006bf8b53614f4f5fcc3ee6c5dff9d36a8460625d7ee6907").unwrap(),
-        );
-    }
-}
-
-#[cfg(test)]
-mod reinforced_concrete_tests_bls12 {
-    use ff::{from_hex, Field};
-
-    use crate::{
-        fields::bls12::FpBLS12, reinforced_concrete::reinforced_concrete_instances::RC_BLS_PARAMS,
-    };
-
-    type Scalar = FpBLS12;
-
-    use super::*;
-
-    static TESTRUNS: usize = 5;
-
-    #[test]
-    fn consistent_perm() {
-        let rc = ReinforcedConcrete::new(&RC_BLS_PARAMS);
-        for _ in 0..TESTRUNS {
-            let input1: [Scalar; 3] = [
-                utils::random_scalar(true),
-                utils::random_scalar(true),
-                utils::random_scalar(true),
-            ];
-
-            let mut input2: [Scalar; 3];
-            loop {
-                input2 = [
-                    utils::random_scalar(true),
-                    utils::random_scalar(true),
-                    utils::random_scalar(true),
-                ];
-                if input1 != input2 {
-                    break;
-                }
-            }
-
-            let perm1 = rc.permutation(&input1);
-            let perm2 = rc.permutation(&input1);
-            let perm3 = rc.permutation(&input2);
-            assert_eq!(perm1, perm2);
-            assert_ne!(perm1, perm3);
-        }
-    }
-
-    #[test]
-    fn compose() {
-        let rc = ReinforcedConcrete::new(&RC_BLS_PARAMS);
+    fn compose56() {
+        type Scalar = Fp56;
+        let rc = ReinforcedConcrete::new(&RC_PARAMS_MEDIUM);
 
         for _ in 0..TESTRUNS {
             let input: Scalar = utils::random_scalar(true);
@@ -320,43 +205,48 @@ mod reinforced_concrete_tests_bls12 {
     }
 
     #[test]
-    fn consistent_hash() {
-        let rc = ReinforcedConcrete::new(&RC_BLS_PARAMS);
-        for _ in 0..TESTRUNS {
-            let input1: Scalar = utils::random_scalar(true);
-            let mut input2: Scalar;
-            loop {
-                input2 = utils::random_scalar(true);
-                if input1 != input2 {
-                    break;
-                }
-            }
-            let input3: Scalar = utils::random_scalar(true);
+    fn compose64() {
+        type Scalar = Fp64;
+        let rc = ReinforcedConcrete::new(&RC_PARAMS_HARD);
 
-            let h1 = rc.hash(&input1, &input3);
-            let h2 = rc.hash(&input1, &input3);
-            let h3 = rc.hash(&input2, &input3);
-            assert_eq!(h1, h2);
-            assert_ne!(h1, h3);
+        for _ in 0..TESTRUNS {
+            let input: Scalar = utils::random_scalar(true);
+            let output = rc.compose(&rc.decompose(&input));
+
+            assert_eq!(input, output);
         }
     }
 
     #[test]
-    fn kats() {
-        let rc = ReinforcedConcrete::new(&RC_BLS_PARAMS);
-        let input: [Scalar; 3] = [Scalar::zero(), Scalar::one(), utils::from_u64(2)];
+    fn easy_kats() {
+        type Scalar = Fp48;
+        let rc = ReinforcedConcrete::new(&RC_PARAMS_EASY);
+        let input: [Scalar; 3] = [Scalar::zero(), Scalar::one(), utils::from_u64::<Scalar>(2)];
         let perm = rc.permutation(&input);
-        assert_eq!(
-            perm[0],
-            from_hex("0x737df8e5a548189a0d77821a907def6736ea6512ba4633f1001f27d8f242913c").unwrap()
-        );
-        assert_eq!(
-            perm[1],
-            from_hex("0x579c286d69635c6e3136f76e99775b478b29412a05516ac6201527abbb3ea098").unwrap(),
-        );
-        assert_eq!(
-            perm[2],
-            from_hex("0x5abe7c734229be9122f936d919f8babb74b36b1ca98f133b00256e29be115aa8").unwrap(),
-        );
+        assert_eq!(perm[0], from_hex("0x9dd81be4a029").unwrap());
+        assert_eq!(perm[1], from_hex("0x2d73419eeae9").unwrap(),);
+        assert_eq!(perm[2], from_hex("0x7de0e45ef4be").unwrap(),);
+    }
+
+    #[test]
+    fn medium_kats() {
+        type Scalar = Fp56;
+        let rc = ReinforcedConcrete::new(&RC_PARAMS_MEDIUM);
+        let input: [Scalar; 3] = [Scalar::zero(), Scalar::one(), utils::from_u64::<Scalar>(2)];
+        let perm = rc.permutation(&input);
+        assert_eq!(perm[0], from_hex("0x7ac8fe441eface").unwrap());
+        assert_eq!(perm[1], from_hex("0x93b569b1b8f58a").unwrap(),);
+        assert_eq!(perm[2], from_hex("0xaa6255d2aa3450").unwrap(),);
+    }
+
+    #[test]
+    fn hard_kats() {
+        type Scalar = Fp64;
+        let rc = ReinforcedConcrete::new(&RC_PARAMS_HARD);
+        let input: [Scalar; 3] = [Scalar::zero(), Scalar::one(), utils::from_u64::<Scalar>(2)];
+        let perm = rc.permutation(&input);
+        assert_eq!(perm[0], from_hex("0x0c3eb8259a579e18").unwrap());
+        assert_eq!(perm[1], from_hex("0x92de8f70ea44896c").unwrap(),);
+        assert_eq!(perm[2], from_hex("0xf4fa8563f3aec0ae").unwrap(),);
     }
 }
