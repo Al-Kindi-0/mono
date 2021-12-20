@@ -68,8 +68,8 @@ mod feistel_mimc_kats {
         let fm = FeistelMimc::new(&FM_PARAMS_EASY1);
         let input: [Scalar; 2] = [Scalar::zero(), Scalar::one()];
         let perm = fm.permutation(&input);
-        assert_eq!(perm[0], from_hex("0x45b9c3d2a4bbdc9e").unwrap());
-        assert_eq!(perm[1], from_hex("00ddd29700b3a6bc76").unwrap());
+        assert_eq!(perm[0], from_hex("0xf874e35bbaf92376").unwrap());
+        assert_eq!(perm[1], from_hex("0x72af6f65901ac3f1").unwrap());
     }
 
     #[test]
@@ -77,8 +77,8 @@ mod feistel_mimc_kats {
         let fm = FeistelMimc::new(&FM_PARAMS_EASY2);
         let input: [Scalar; 2] = [Scalar::zero(), Scalar::one()];
         let perm = fm.permutation(&input);
-        assert_eq!(perm[0], from_hex("0x788a3f6ea5a6a53e").unwrap());
-        assert_eq!(perm[1], from_hex("0x25222a199c56f899").unwrap());
+        assert_eq!(perm[0], from_hex("0x85bd8eb1f92bfb9a").unwrap());
+        assert_eq!(perm[1], from_hex("0x49d9875c885a962c").unwrap());
     }
 
     #[test]
@@ -86,8 +86,8 @@ mod feistel_mimc_kats {
         let fm = FeistelMimc::new(&FM_PARAMS_MEDIUM);
         let input: [Scalar; 2] = [Scalar::zero(), Scalar::one()];
         let perm = fm.permutation(&input);
-        assert_eq!(perm[0], from_hex("0x0bd74ec3122b04f6").unwrap());
-        assert_eq!(perm[1], from_hex("0x67d7f4198480eaee").unwrap());
+        assert_eq!(perm[0], from_hex("0x6f069da7d13eeac0").unwrap());
+        assert_eq!(perm[1], from_hex("0xf99209102b0f4e3b").unwrap());
     }
 
     #[test]
@@ -95,8 +95,8 @@ mod feistel_mimc_kats {
         let fm = FeistelMimc::new(&FM_PARAMS_HARD1);
         let input: [Scalar; 2] = [Scalar::zero(), Scalar::one()];
         let perm = fm.permutation(&input);
-        assert_eq!(perm[0], from_hex("0x299f5eaff8f41844").unwrap());
-        assert_eq!(perm[1], from_hex("0xd7c9d66716f2cae7").unwrap());
+        assert_eq!(perm[0], from_hex("0x1017818eae881aee").unwrap());
+        assert_eq!(perm[1], from_hex("0x7e7025221ea192b6").unwrap());
     }
 
     #[test]
@@ -104,7 +104,7 @@ mod feistel_mimc_kats {
         let fm = FeistelMimc::new(&FM_PARAMS_HARD2);
         let input: [Scalar; 2] = [Scalar::zero(), Scalar::one()];
         let perm = fm.permutation(&input);
-        assert_eq!(perm[0], from_hex("0xf874e35bbaf92376").unwrap());
-        assert_eq!(perm[1], from_hex("0x72af6f65901ac3f1").unwrap());
+        assert_eq!(perm[0], from_hex("0x095c81195f93fa60").unwrap());
+        assert_eq!(perm[1], from_hex("0x41c45da5e1655eb6").unwrap());
     }
 }

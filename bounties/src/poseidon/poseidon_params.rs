@@ -6,6 +6,7 @@ pub struct PoseidonParams<S: PrimeField> {
     pub(crate) d: usize, // sbox degree
     pub(crate) rounds_f_beginning: usize,
     pub(crate) rounds_p: usize,
+    #[allow(dead_code)]
     pub(crate) rounds_f_end: usize,
     pub(crate) rounds: usize,
     pub(crate) mds: Vec<Vec<S>>,
