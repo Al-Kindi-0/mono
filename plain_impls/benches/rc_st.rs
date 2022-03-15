@@ -2,6 +2,7 @@ use criterion::{black_box, criterion_group, criterion_main, Criterion};
 use zkhash::{
     feistel_mimc::{feistel_mimc::FeistelMimc, feistel_mimc_instances::FM_ST_PARAMS},
     fields::{st::FpST, utils},
+    neptune::{neptune::Neptune, neptune_instances::NEPTUNE_ST_PARAMS},
     poseidon::{poseidon::Poseidon, poseidon_instance_st::POSEIDON_ST_PARAMS},
     reinforced_concrete_st::{
         reinforced_concrete_st::ReinforcedConcreteSt,
@@ -50,6 +51,23 @@ fn poseidon_permutation(c: &mut Criterion) {
     ];
 
     c.bench_function("Poseidon ST Permutation", move |bench| {
+        bench.iter(|| {
+            let perm = rc.permutation(black_box(&input));
+            black_box(perm)
+        });
+    });
+}
+
+fn neptune_permutation(c: &mut Criterion) {
+    let rc = Neptune::new(&NEPTUNE_ST_PARAMS);
+    let input: [Scalar; 4] = [
+        utils::random_scalar(true),
+        utils::random_scalar(true),
+        utils::random_scalar(true),
+        utils::random_scalar(true),
+    ];
+
+    c.bench_function("Neptune ST Permutation", move |bench| {
         bench.iter(|| {
             let perm = rc.permutation(black_box(&input));
             black_box(perm)
@@ -203,6 +221,7 @@ fn criterion_benchmark_plain_bn(c: &mut Criterion) {
     rescue_prime_permutation(c);
     feistel_mimc_permutation(c);
     feistel_mimc_hash_two(c);
+    neptune_permutation(c);
 }
 
 criterion_group!(

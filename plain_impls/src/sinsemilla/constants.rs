@@ -1,7 +1,4 @@
 //! Sinsemilla generators
-use group::Curve;
-use halo2::arithmetic::{CurveAffine, CurveExt};
-use pasta_curves::pallas;
 
 /// Number of bits of each message piece in $\mathsf{SinsemillaHashToPoint}$
 pub const K: usize = 10;
@@ -15,6 +12,18 @@ pub const INV_TWO_POW_K: [u8; 32] = [
 /// The largest integer such that $2^c \leq (r_P - 1) / 2$, where $r_P$ is the order
 /// of Pallas.
 pub const C: usize = 253;
+
+/// $\ell^\mathsf{Orchard}_\mathsf{Merkle}$
+pub const L_ORCHARD_MERKLE: usize = 255;
+
+/// SWU hash-to-curve personalization for the note commitment generator
+pub const NOTE_COMMITMENT_PERSONALIZATION: &str = "z.cash:Orchard-NoteCommit";
+
+/// SWU hash-to-curve personalization for the IVK commitment generator
+pub const COMMIT_IVK_PERSONALIZATION: &str = "z.cash:Orchard-CommitIvk";
+
+/// SWU hash-to-curve personalization for the Merkle CRH generator
+pub const MERKLE_CRH_PERSONALIZATION: &str = "z.cash:Orchard-MerkleCRH";
 
 // Sinsemilla Q generators
 
@@ -62,35 +71,31 @@ pub const Q_MERKLE_CRH: ([u8; 32], [u8; 32]) = (
 /// SWU hash-to-curve personalization for Sinsemilla $S$ generators.
 pub const S_PERSONALIZATION: &str = "z.cash:SinsemillaS";
 
-/// Creates the Sinsemilla S generators used in each round of the Sinsemilla hash
-pub fn sinsemilla_s_generators() -> impl Iterator<Item = (pallas::Base, pallas::Base)> {
-    let hasher = pallas::Point::hash_to_curve(S_PERSONALIZATION);
-    (0..(1u32 << K)).map(move |j| {
-        let point = hasher(&j.to_le_bytes()).to_affine().coordinates().unwrap();
-        (*point.x(), *point.y())
-    })
-}
-
 #[cfg(test)]
 mod tests {
-    use crate::sinsemilla::sinsemilla::{
-        CommitDomain, HashDomain, COMMIT_IVK_PERSONALIZATION, MERKLE_CRH_PERSONALIZATION,
-        NOTE_COMMITMENT_PERSONALIZATION,
-    };
+    use crate::sinsemilla::sinsemilla::{CommitDomain, HashDomain};
 
+    // use super::super::{CommitDomain, HashDomain};
     use super::*;
-
-    use group::Curve;
-    use halo2::arithmetic::FieldExt;
+    // use crate::constants::{
+    //     COMMIT_IVK_PERSONALIZATION, MERKLE_CRH_PERSONALIZATION, NOTE_COMMITMENT_PERSONALIZATION,
+    // };
+    use group::{ff::PrimeField, Curve};
+    use halo2::arithmetic::{CurveAffine, CurveExt};
     use halo2::pasta::pallas;
 
     #[test]
     fn sinsemilla_s() {
         use super::super::sinsemilla_s::SINSEMILLA_S;
-        let sinsemilla_s: Vec<_> = sinsemilla_s_generators().collect();
-        assert_eq!(sinsemilla_s.len(), SINSEMILLA_S.len());
-        for (expected, actual) in sinsemilla_s.iter().zip(&SINSEMILLA_S[..]) {
-            assert_eq!(expected, actual);
+        let hasher = pallas::Point::hash_to_curve(S_PERSONALIZATION);
+
+        for j in 0..(1u32 << K) {
+            let computed = {
+                let point = hasher(&j.to_le_bytes()).to_affine().coordinates().unwrap();
+                (*point.x(), *point.y())
+            };
+            let actual = SINSEMILLA_S[j as usize];
+            assert_eq!(computed, actual);
         }
     }
 
@@ -102,11 +107,11 @@ mod tests {
 
         assert_eq!(
             *coords.x(),
-            pallas::Base::from_bytes(&Q_NOTE_COMMITMENT_M_GENERATOR.0).unwrap()
+            pallas::Base::from_repr(Q_NOTE_COMMITMENT_M_GENERATOR.0).unwrap()
         );
         assert_eq!(
             *coords.y(),
-            pallas::Base::from_bytes(&Q_NOTE_COMMITMENT_M_GENERATOR.1).unwrap()
+            pallas::Base::from_repr(Q_NOTE_COMMITMENT_M_GENERATOR.1).unwrap()
         );
     }
 
@@ -118,11 +123,11 @@ mod tests {
 
         assert_eq!(
             *coords.x(),
-            pallas::Base::from_bytes(&Q_COMMIT_IVK_M_GENERATOR.0).unwrap()
+            pallas::Base::from_repr(Q_COMMIT_IVK_M_GENERATOR.0).unwrap()
         );
         assert_eq!(
             *coords.y(),
-            pallas::Base::from_bytes(&Q_COMMIT_IVK_M_GENERATOR.1).unwrap()
+            pallas::Base::from_repr(Q_COMMIT_IVK_M_GENERATOR.1).unwrap()
         );
     }
 
@@ -134,18 +139,18 @@ mod tests {
 
         assert_eq!(
             *coords.x(),
-            pallas::Base::from_bytes(&Q_MERKLE_CRH.0).unwrap()
+            pallas::Base::from_repr(Q_MERKLE_CRH.0).unwrap()
         );
         assert_eq!(
             *coords.y(),
-            pallas::Base::from_bytes(&Q_MERKLE_CRH.1).unwrap()
+            pallas::Base::from_repr(Q_MERKLE_CRH.1).unwrap()
         );
     }
 
     #[test]
     fn inv_two_pow_k() {
-        let two_pow_k = pallas::Base::from_u64(1u64 << K);
-        let inv_two_pow_k = pallas::Base::from_bytes(&INV_TWO_POW_K).unwrap();
+        let two_pow_k = pallas::Base::from(1u64 << K);
+        let inv_two_pow_k = pallas::Base::from_repr(INV_TWO_POW_K).unwrap();
 
         assert_eq!(two_pow_k * inv_two_pow_k, pallas::Base::one());
     }

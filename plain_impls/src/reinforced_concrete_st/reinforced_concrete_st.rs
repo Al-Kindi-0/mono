@@ -1,10 +1,7 @@
-use std::sync::Arc;
-
-use ff::PrimeField;
-
-use crate::fields::utils4;
-
 use super::reinforced_concrete_st_params::ReinforcedConcreteStParams;
+use crate::{fields::utils4, merkle_tree::merkle_tree_fp::MerkleTreeHash};
+use ff::PrimeField;
+use std::sync::Arc;
 
 #[derive(Clone, Debug)]
 pub struct ReinforcedConcreteSt<F: PrimeField> {
@@ -29,6 +26,7 @@ impl<F: PrimeField> ReinforcedConcreteSt<F> {
     const RECIP: u64 = Self::R.1;
     const S: u32 = (Self::S_24 as u64).leading_zeros();
 
+    #[allow(clippy::assertions_on_constants)]
     pub fn new(params: &Arc<ReinforcedConcreteStParams<F>>) -> Self {
         debug_assert!(ReinforcedConcreteStParams::<F>::T == 3);
         debug_assert!(params.betas[0].into_repr().as_ref().len() == 4);
@@ -103,10 +101,10 @@ impl<F: PrimeField> ReinforcedConcreteSt<F> {
 
             res[Self::LEN - 2] = (lsw & Self::MASK_0) as u16;
             res[Self::LEN - 2 - 1] = ((lsw & Self::MASK_1) >> Self::BIT) as u16;
-            res[Self::LEN - 2 - 2] = ((lsw & Self::MASK_2) >> 2 * Self::BIT) as u16;
-            res[Self::LEN - 2 - 3] = ((lsw & Self::MASK_3) >> 3 * Self::BIT) as u16;
-            res[Self::LEN - 2 - 4] = ((lsw & Self::MASK_4) >> 4 * Self::BIT) as u16;
-            res[Self::LEN - 2 - 5] = ((lsw & Self::MASK_5) >> 5 * Self::BIT) as u16;
+            res[Self::LEN - 2 - 2] = ((lsw & Self::MASK_2) >> (2 * Self::BIT)) as u16;
+            res[Self::LEN - 2 - 3] = ((lsw & Self::MASK_3) >> (3 * Self::BIT)) as u16;
+            res[Self::LEN - 2 - 4] = ((lsw & Self::MASK_4) >> (4 * Self::BIT)) as u16;
+            res[Self::LEN - 2 - 5] = ((lsw & Self::MASK_5) >> (5 * Self::BIT)) as u16;
 
             repr = utils4::full_shr(&repr, (Self::BIT * Self::STAGE_SIZE) as u32);
         }
@@ -117,13 +115,13 @@ impl<F: PrimeField> ReinforcedConcreteSt<F> {
             res[Self::LEN - 2 - Self::STAGE_SIZE] = (lsw & Self::MASK_0) as u16;
             res[Self::LEN - 2 - Self::STAGE_SIZE - 1] = ((lsw & Self::MASK_1) >> Self::BIT) as u16;
             res[Self::LEN - 2 - Self::STAGE_SIZE - 2] =
-                ((lsw & Self::MASK_2) >> 2 * Self::BIT) as u16;
+                ((lsw & Self::MASK_2) >> (2 * Self::BIT)) as u16;
             res[Self::LEN - 2 - Self::STAGE_SIZE - 3] =
-                ((lsw & Self::MASK_3) >> 3 * Self::BIT) as u16;
+                ((lsw & Self::MASK_3) >> (3 * Self::BIT)) as u16;
             res[Self::LEN - 2 - Self::STAGE_SIZE - 4] =
-                ((lsw & Self::MASK_4) >> 4 * Self::BIT) as u16;
+                ((lsw & Self::MASK_4) >> (4 * Self::BIT)) as u16;
             res[Self::LEN - 2 - Self::STAGE_SIZE - 5] =
-                ((lsw & Self::MASK_5) >> 5 * Self::BIT) as u16;
+                ((lsw & Self::MASK_5) >> (5 * Self::BIT)) as u16;
 
             repr = utils4::full_shr(&repr, (Self::BIT * Self::STAGE_SIZE) as u32);
         }
@@ -135,13 +133,13 @@ impl<F: PrimeField> ReinforcedConcreteSt<F> {
             res[Self::LEN - 2 - 2 * Self::STAGE_SIZE - 1] =
                 ((lsw & Self::MASK_1) >> Self::BIT) as u16;
             res[Self::LEN - 2 - 2 * Self::STAGE_SIZE - 2] =
-                ((lsw & Self::MASK_2) >> 2 * Self::BIT) as u16;
+                ((lsw & Self::MASK_2) >> (2 * Self::BIT)) as u16;
             res[Self::LEN - 2 - 2 * Self::STAGE_SIZE - 3] =
-                ((lsw & Self::MASK_3) >> 3 * Self::BIT) as u16;
+                ((lsw & Self::MASK_3) >> (3 * Self::BIT)) as u16;
             res[Self::LEN - 2 - 2 * Self::STAGE_SIZE - 4] =
-                ((lsw & Self::MASK_4) >> 4 * Self::BIT) as u16;
+                ((lsw & Self::MASK_4) >> (4 * Self::BIT)) as u16;
             res[Self::LEN - 2 - 2 * Self::STAGE_SIZE - 5] =
-                ((lsw & Self::MASK_5) >> 5 * Self::BIT) as u16;
+                ((lsw & Self::MASK_5) >> (5 * Self::BIT)) as u16;
 
             repr = utils4::full_shr(&repr, (Self::BIT * Self::STAGE_SIZE) as u32);
         }
@@ -153,13 +151,13 @@ impl<F: PrimeField> ReinforcedConcreteSt<F> {
             res[Self::LEN - 2 - 3 * Self::STAGE_SIZE - 1] =
                 ((lsw & Self::MASK_1) >> Self::BIT) as u16;
             res[Self::LEN - 2 - 3 * Self::STAGE_SIZE - 2] =
-                ((lsw & Self::MASK_2) >> 2 * Self::BIT) as u16;
+                ((lsw & Self::MASK_2) >> (2 * Self::BIT)) as u16;
             res[Self::LEN - 2 - 3 * Self::STAGE_SIZE - 3] =
-                ((lsw & Self::MASK_3) >> 3 * Self::BIT) as u16;
+                ((lsw & Self::MASK_3) >> (3 * Self::BIT)) as u16;
             res[Self::LEN - 2 - 3 * Self::STAGE_SIZE - 4] =
-                ((lsw & Self::MASK_4) >> 4 * Self::BIT) as u16;
+                ((lsw & Self::MASK_4) >> (4 * Self::BIT)) as u16;
             res[Self::LEN - 2 - 3 * Self::STAGE_SIZE - 5] =
-                ((lsw & Self::MASK_5) >> 5 * Self::BIT) as u16;
+                ((lsw & Self::MASK_5) >> (5 * Self::BIT)) as u16;
 
             // repr = utils4::full_shr(&repr, (Self::BIT * Self::STAGE_SIZE) as u32);
         }
@@ -247,7 +245,7 @@ impl<F: PrimeField> ReinforcedConcreteSt<F> {
     pub fn bars(&self, state: &[F; 3]) -> [F; 3] {
         let mut s = state.to_owned();
         for el in s.iter_mut() {
-            let mut vals = self.decompose(&el);
+            let mut vals = self.decompose(el);
             for val in vals.iter_mut() {
                 // *val = self.params.sbox[*val as usize];
                 // safe because sbox is padded to the correct size in params
@@ -261,7 +259,6 @@ impl<F: PrimeField> ReinforcedConcreteSt<F> {
     }
 
     pub fn permutation(&self, input: &[F; 3]) -> [F; 3] {
-        assert_eq!(ReinforcedConcreteStParams::<F>::T, input.len());
         let mut current_state = input.to_owned();
         // first concrete
         self.concrete(&mut current_state, 0);
@@ -295,13 +292,19 @@ impl<F: PrimeField> ReinforcedConcreteSt<F> {
     }
 }
 
+impl<F: PrimeField> MerkleTreeHash<F> for ReinforcedConcreteSt<F> {
+    fn compress(&self, input: &[&F; 2]) -> F {
+        self.hash(input[0], input[1])
+    }
+}
+
 #[cfg(test)]
 mod reinforced_concrete_st_tests {
     use ff::{from_hex, Field};
     use lazy_static::lazy_static;
 
     use crate::{
-        fields::{st::FpST, utils},
+        fields::st::FpST,
         reinforced_concrete::{
             reinforced_concrete::ReinforcedConcrete,
             reinforced_concrete_params::ReinforcedConcreteParams,
@@ -398,7 +401,7 @@ mod reinforced_concrete_st_tests {
         let rc = ReinforcedConcreteSt::new(&RC_ST_PARAMS);
         let rc2 = ReinforcedConcrete::new(&RC_ST_P);
 
-        let input: [Scalar; 3] = [Scalar::zero(), Scalar::one(), utils::from_u64(2)];
+        let input: [Scalar; 3] = [Scalar::zero(), Scalar::one(), utils4::from_u64(2)];
         let perm1 = rc.permutation(&input);
         let perm2 = rc2.permutation(&input);
         assert_eq!(perm1, perm2);

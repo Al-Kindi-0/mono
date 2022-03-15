@@ -1,28 +1,16 @@
 //! The Sinsemilla hash function and commitment scheme.
 
-use super::sinsemilla_s::SINSEMILLA_S;
-use halo2::arithmetic::CurveExt;
-use pasta_curves::{pallas, Ep};
+use group::Wnaf;
+use halo2::arithmetic::{CurveAffine, CurveExt};
+use pasta_curves::pallas;
 use subtle::CtOption;
 
-use super::spec::extract_p_bottom;
-use super::util::gen_const_array;
+use super::spec::{extract_p_bottom, i2lebsp};
 
 use super::addition::IncompletePoint;
 
-use super::constants::*;
-
-/// $\ell^\mathsf{Orchard}_\mathsf{Merkle}$
-pub const L_ORCHARD_MERKLE: usize = 255;
-
-/// SWU hash-to-curve personalization for the note commitment generator
-pub const NOTE_COMMITMENT_PERSONALIZATION: &str = "z.cash:Orchard-NoteCommit";
-
-/// SWU hash-to-curve personalization for the IVK commitment generator
-pub const COMMIT_IVK_PERSONALIZATION: &str = "z.cash:Orchard-CommitIvk";
-
-/// SWU hash-to-curve personalization for the Merkle CRH generator
-pub const MERKLE_CRH_PERSONALIZATION: &str = "z.cash:Orchard-MerkleCRH";
+pub use super::constants::*;
+pub(crate) use super::sinsemilla_s::*;
 
 pub(crate) fn lebs2ip_k(bits: &[bool]) -> u32 {
     assert!(bits.len() == K);
@@ -35,7 +23,7 @@ pub(crate) fn lebs2ip_k(bits: &[bool]) -> u32 {
 /// up to `2^K` - 1.
 pub fn i2lebsp_k(int: usize) -> [bool; K] {
     assert!(int < (1 << K));
-    gen_const_array(|mask: usize| (int & (1 << mask)) != 0)
+    i2lebsp(int as u64)
 }
 
 /// Pads the given iterator (which MUST have length $\leq K * C$) with zero-bits to a
@@ -100,7 +88,7 @@ impl<I: Iterator<Item = bool>> Iterator for Pad<I> {
 
 /// A domain in which $\mathsf{SinsemillaHashToPoint}$ and $\mathsf{SinsemillaHash}$ can
 /// be used.
-#[derive(Debug)]
+#[derive(Debug, Clone)]
 #[allow(non_snake_case)]
 pub struct HashDomain {
     pub(crate) Q: pallas::Point,
@@ -117,53 +105,41 @@ impl HashDomain {
     /// $\mathsf{SinsemillaHashToPoint}$ from [§ 5.4.1.9][concretesinsemillahash].
     ///
     /// [concretesinsemillahash]: https://zips.z.cash/protocol/nu5.pdf#concretesinsemillahash
-    pub(crate) fn hash_to_point(&self, msg: impl Iterator<Item = bool>) -> CtOption<pallas::Point> {
-        // self.hash_to_point_inner(msg).into()
-        self.hash_to_point_inner_lookup(msg).into() // I added the lookup
+    pub fn hash_to_point(&self, msg: impl Iterator<Item = bool>) -> CtOption<pallas::Point> {
+        self.hash_to_point_inner(msg).into()
     }
 
     #[allow(non_snake_case)]
-    #[cfg(test)]
     fn hash_to_point_inner(&self, msg: impl Iterator<Item = bool>) -> IncompletePoint {
         let padded: Vec<_> = Pad::new(msg).collect();
 
-        let hasher_S = pallas::Point::hash_to_curve(S_PERSONALIZATION);
-        let S = |chunk: &[bool]| hasher_S(&lebs2ip_k(chunk).to_le_bytes());
-
         padded
             .chunks(K)
             .fold(IncompletePoint::from(self.Q), |acc, chunk| {
-                (acc + S(chunk)) + acc
-            })
-    }
-
-    // implemented by me
-    #[allow(non_snake_case)]
-    fn hash_to_point_inner_lookup(&self, msg: impl Iterator<Item = bool>) -> IncompletePoint {
-        let padded: Vec<_> = Pad::new(msg).collect();
-
-        padded
-            .chunks(K)
-            .fold(IncompletePoint::from(self.Q), |acc, chunk| {
-                let lookedup = SINSEMILLA_S[lebs2ip_k(chunk) as usize];
-                let point = Ep::new_jacobian(lookedup.0, lookedup.1, pallas::Base::one()).unwrap();
-                (acc + point) + acc
+                let (S_x, S_y) = SINSEMILLA_S[lebs2ip_k(chunk) as usize];
+                let S_chunk = pallas::Affine::from_xy(S_x, S_y).unwrap();
+                (acc + S_chunk) + acc
             })
     }
 
     /// $\mathsf{SinsemillaHash}$ from [§ 5.4.1.9][concretesinsemillahash].
     ///
     /// [concretesinsemillahash]: https://zips.z.cash/protocol/nu5.pdf#concretesinsemillahash
+    ///
+    /// # Panics
+    ///
+    /// This panics if the message length is greater than [`K`] * [`C`]
     pub fn hash(&self, msg: impl Iterator<Item = bool>) -> CtOption<pallas::Base> {
         extract_p_bottom(self.hash_to_point(msg))
     }
 
-    // /// Returns the Sinsemilla $Q$ constant for this domain.
-    // #[cfg(test)]
-    // #[allow(non_snake_case)]
-    // pub(crate) fn Q(&self) -> pallas::Point {
-    //     self.Q
-    // }
+    /// Returns the Sinsemilla $Q$ constant for this domain.
+    #[cfg(test)]
+    #[allow(non_snake_case)]
+    #[allow(dead_code)]
+    pub(crate) fn Q(&self) -> pallas::Point {
+        self.Q
+    }
 }
 
 /// A domain in which $\mathsf{SinsemillaCommit}$ and $\mathsf{SinsemillaShortCommit}$ can
@@ -191,13 +167,14 @@ impl CommitDomain {
     ///
     /// [concretesinsemillacommit]: https://zips.z.cash/protocol/nu5.pdf#concretesinsemillacommit
     #[allow(non_snake_case)]
-    pub(crate) fn commit(
+    pub fn commit(
         &self,
         msg: impl Iterator<Item = bool>,
         r: &pallas::Scalar,
     ) -> CtOption<pallas::Point> {
-        // (self.M.hash_to_point_inner(msg) + self.R * r).into()
-        (self.M.hash_to_point_inner_lookup(msg) + self.R * r).into()
+        // We use complete addition for the blinding factor.
+        CtOption::<pallas::Point>::from(self.M.hash_to_point_inner(msg))
+            .map(|p| p + Wnaf::new().scalar(r).base(self.R))
     }
 
     /// $\mathsf{SinsemillaShortCommit}$ from [§ 5.4.8.4][concretesinsemillacommit].
@@ -211,12 +188,13 @@ impl CommitDomain {
         extract_p_bottom(self.commit(msg, r))
     }
 
-    // /// Returns the Sinsemilla $R$ constant for this domain.
-    // #[cfg(test)]
-    // #[allow(non_snake_case)]
-    // pub(crate) fn R(&self) -> pallas::Point {
-    //     self.R
-    // }
+    /// Returns the Sinsemilla $R$ constant for this domain.
+    #[cfg(test)]
+    #[allow(non_snake_case)]
+    #[allow(dead_code)]
+    pub(crate) fn R(&self) -> pallas::Point {
+        self.R
+    }
 }
 
 #[cfg(test)]
@@ -298,72 +276,6 @@ mod tests {
                 i2lebsp_k(lebs2ip_k(&bitstring) as usize).to_vec(),
                 bitstring
             );
-        }
-    }
-}
-
-// implemented by me
-#[cfg(test)]
-mod sinsemilla_tests {
-    use super::*;
-    use group::ff::Field;
-    use group::ff::PrimeFieldBits;
-    use pasta_curves::pallas::Base;
-    use random::thread_rng;
-    use std::iter;
-
-    static TESTRUNS: usize = 5;
-
-    #[test]
-    fn hash_to_point_equals_lookup() {
-        let domain = HashDomain::new(MERKLE_CRH_PERSONALIZATION);
-
-        for _ in 0..TESTRUNS {
-            let left = Base::random(thread_rng()).to_le_bits();
-            let right = Base::random(thread_rng()).to_le_bits();
-
-            let first = i2lebsp_k(0);
-
-            let input = iter::empty()
-                .chain(first.iter().copied())
-                .chain(left.iter().by_val().take(L_ORCHARD_MERKLE))
-                .chain(right.iter().by_val().take(L_ORCHARD_MERKLE));
-
-            let res1: CtOption<pallas::Point> = domain.hash_to_point_inner(input.clone()).into();
-            let res2: CtOption<pallas::Point> =
-                domain.hash_to_point_inner_lookup(input.clone()).into();
-            assert_eq!(res1.unwrap(), res2.unwrap());
-        }
-    }
-
-    #[test]
-    fn consistent_perm() {
-        let domain = HashDomain::new(MERKLE_CRH_PERSONALIZATION);
-
-        for _ in 0..TESTRUNS {
-            let left1 = Base::random(thread_rng()).to_le_bits();
-            let right1 = Base::random(thread_rng()).to_le_bits();
-
-            let left2 = Base::random(thread_rng()).to_le_bits();
-            let right2 = Base::random(thread_rng()).to_le_bits();
-
-            let first = i2lebsp_k(0);
-
-            let input1 = iter::empty()
-                .chain(first.iter().copied())
-                .chain(left1.iter().by_val().take(L_ORCHARD_MERKLE))
-                .chain(right1.iter().by_val().take(L_ORCHARD_MERKLE));
-
-            let input2 = iter::empty()
-                .chain(first.iter().copied())
-                .chain(left2.iter().by_val().take(L_ORCHARD_MERKLE))
-                .chain(right2.iter().by_val().take(L_ORCHARD_MERKLE));
-
-            let perm1 = domain.hash(input1.clone()).unwrap();
-            let perm2 = domain.hash(input1.clone()).unwrap();
-            let perm3 = domain.hash(input2.clone()).unwrap();
-            assert_eq!(perm1, perm2);
-            assert_ne!(perm1, perm3);
         }
     }
 }

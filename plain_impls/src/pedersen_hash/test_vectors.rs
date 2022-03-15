@@ -1,12 +1,7 @@
 //! Test vectors from https://github.com/zcash-hackworks/zcash-test-vectors/blob/master/sapling_pedersen.py
 
-#[cfg(test)]
-use crate::pedersen_hash::pedersen_hash::test::TestVector;
+use super::pedersen_hash::{test::TestVector, Personalization};
 
-#[cfg(test)]
-use crate::pedersen_hash::pedersen_hash::Personalization;
-
-#[cfg(test)]
 pub fn get_vectors<'a>() -> Vec<TestVector<'a>> {
     return vec![
         TestVector {

@@ -31,6 +31,7 @@ impl Personalization {
     }
 }
 
+#[allow(clippy::needless_borrow)]
 pub fn pedersen_hash<I>(personalization: Personalization, bits: I) -> jubjub::SubgroupPoint
 where
     I: IntoIterator<Item = bool>,

@@ -1,8 +1,7 @@
-use std::sync::Arc;
-
-use ff::PrimeField;
-
 use super::feistel_mimc_params::FeistelMimcParams;
+use crate::merkle_tree::merkle_tree_fp::MerkleTreeHash;
+use ff::PrimeField;
+use std::sync::Arc;
 
 #[derive(Clone, Debug)]
 pub struct FeistelMimc<F: PrimeField> {
@@ -20,12 +19,12 @@ impl<F: PrimeField> FeistelMimc<F> {
         let mut input = *state_0;
         input.add_assign(&self.params.round_constants[round]);
 
-        let mut input2 = input.clone();
+        let mut input2 = input.to_owned();
         input2.square();
         match self.params.d {
             3 => {}
             5 => input2.square(),
-            _ => assert!(false),
+            _ => panic!(),
         }
         input2.mul_assign(&input);
         input2
@@ -54,6 +53,12 @@ impl<F: PrimeField> FeistelMimc<F> {
         let mut perm_out = self.permutation(&perm_in);
         perm_out[0].add_assign(input2);
         self.permutation(&perm_out)[0]
+    }
+}
+
+impl<F: PrimeField> MerkleTreeHash<F> for FeistelMimc<F> {
+    fn compress(&self, input: &[&F; 2]) -> F {
+        self.hash_two(input[0], input[1])
     }
 }
 

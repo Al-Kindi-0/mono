@@ -1,7 +1,7 @@
+use super::poseidon_params::PoseidonParams;
+use crate::merkle_tree::merkle_tree_fp::MerkleTreeHash;
 use ff::PrimeField;
 use std::sync::Arc;
-
-use super::poseidon_params::PoseidonParams;
 
 #[derive(Clone, Debug)]
 pub struct Poseidon<S: PrimeField> {
@@ -82,24 +82,23 @@ impl<S: PrimeField> Poseidon<S> {
     fn sbox_p(&self, input: &S) -> S {
         let mut input2 = *input;
         input2.square();
-        let res = match self.params.d {
+
+        match self.params.d {
             3 => {
                 let mut out = input2;
-                out.mul_assign(&input);
+                out.mul_assign(input);
                 out
             }
             5 => {
                 let mut out = input2;
                 out.square();
-                out.mul_assign(&input);
+                out.mul_assign(input);
                 out
             }
             _ => {
-                assert!(false);
-                *input
+                panic!()
             }
-        };
-        res
+        }
     }
 
     fn cheap_matmul(&self, input: &[S], r: usize) -> Vec<S> {
@@ -128,11 +127,10 @@ impl<S: PrimeField> Poseidon<S> {
         let t = mat.len();
         debug_assert!(t == input.len());
         let mut out = vec![S::zero(); t];
-        // TODO check if really faster
         for row in 0..t {
-            for col in 0..t {
+            for (col, inp) in input.iter().enumerate().take(t) {
                 let mut tmp = mat[row][col];
-                tmp.mul_assign(&input[col]);
+                tmp.mul_assign(inp);
                 out[row].add_assign(&tmp);
             }
         }
@@ -149,6 +147,12 @@ impl<S: PrimeField> Poseidon<S> {
                 r
             })
             .collect()
+    }
+}
+
+impl<F: PrimeField> MerkleTreeHash<F> for Poseidon<F> {
+    fn compress(&self, input: &[&F; 2]) -> F {
+        self.permutation(&[input[0].to_owned(), input[1].to_owned(), F::zero()])[0]
     }
 }
 

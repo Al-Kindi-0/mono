@@ -1,3 +1,4 @@
+#[allow(clippy::module_inception)]
 pub mod poseidon;
 pub mod poseidon_instance_bls12;
 pub mod poseidon_instance_bn256;

@@ -1,19 +1,21 @@
 use std::iter;
 
-use blake2::{Blake2b, Blake2s};
+use bitvec::order::Lsb0;
+use bitvec::view::AsBits;
+use blake2::{Blake2b512, Blake2s256};
 use criterion::{black_box, criterion_group, criterion_main, Criterion};
 use group::ff::Field;
+use group::ff::PrimeField;
 use group::ff::PrimeFieldBits;
+use group::Curve;
+use jubjub::ExtendedPoint;
 use pasta_curves::pallas::Base;
 use random::thread_rng;
-use random::Rng;
 use sha2::{Digest, Sha256};
 use sha3::Sha3_256;
-use zkhash::pedersen_hash::pedersen_hash::pedersen_hash;
-use zkhash::pedersen_hash::pedersen_hash::Personalization;
-use zkhash::sinsemilla::sinsemilla::{
-    i2lebsp_k, HashDomain, L_ORCHARD_MERKLE, MERKLE_CRH_PERSONALIZATION,
-};
+use zkhash::pedersen_hash::pedersen_hash::{pedersen_hash, Personalization};
+use zkhash::sinsemilla::constants::L_ORCHARD_MERKLE;
+use zkhash::sinsemilla::sinsemilla::{i2lebsp_k, HashDomain, MERKLE_CRH_PERSONALIZATION};
 
 fn sha256(c: &mut Criterion) {
     let input = b"hello_world";
@@ -42,7 +44,7 @@ fn blake2s(c: &mut Criterion) {
 
     c.bench_function("Blake2s Hash", move |bench| {
         bench.iter(|| {
-            let hash = Blake2s::digest(black_box(input));
+            let hash = Blake2s256::digest(black_box(input));
             black_box(hash)
         });
     });
@@ -53,7 +55,7 @@ fn blake2b(c: &mut Criterion) {
 
     c.bench_function("Blake2b Hash", move |bench| {
         bench.iter(|| {
-            let hash = Blake2b::digest(black_box(input));
+            let hash = Blake2b512::digest(black_box(input));
             black_box(hash)
         });
     });
@@ -83,12 +85,42 @@ fn sinsemilla(c: &mut Criterion) {
 fn pedersen(c: &mut Criterion) {
     let mut rng = thread_rng();
     let personalization = Personalization::MerkleTree(0);
-    let input: Vec<bool> = (0..510).map(|_| rng.gen::<bool>()).collect();
+
+    let input = [
+        jubjub::Base::random(&mut rng),
+        jubjub::Base::random(&mut rng),
+    ];
+
+    let lhs = {
+        let mut tmp = [false; 256];
+        for (a, b) in tmp.iter_mut().zip(input[0].to_repr().as_bits::<Lsb0>()) {
+            *a = *b;
+        }
+        tmp
+    };
+
+    let rhs = {
+        let mut tmp = [false; 256];
+        for (a, b) in tmp.iter_mut().zip(input[1].to_repr().as_bits::<Lsb0>()) {
+            *a = *b;
+        }
+        tmp
+    };
+    let input = lhs
+        .iter()
+        .copied()
+        .take(bls12_381::Scalar::NUM_BITS as usize)
+        .chain(
+            rhs.iter()
+                .copied()
+                .take(bls12_381::Scalar::NUM_BITS as usize),
+        );
 
     c.bench_function("Pedersen Hash", move |bench| {
         bench.iter(|| {
             let hash = pedersen_hash(black_box(personalization), black_box(input.clone()));
-            black_box(hash)
+            let out = ExtendedPoint::from(hash).to_affine().get_u();
+            black_box(out)
         });
     });
 }

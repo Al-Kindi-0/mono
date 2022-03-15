@@ -1,10 +1,7 @@
-use std::sync::Arc;
-
-use ff::PrimeField;
-
-use crate::fields::utils;
-
 use super::reinforced_concrete_params::ReinforcedConcreteParams;
+use crate::{fields::utils, merkle_tree::merkle_tree_fp::MerkleTreeHash};
+use ff::PrimeField;
+use std::sync::Arc;
 
 #[derive(Clone, Debug)]
 pub struct ReinforcedConcrete<F: PrimeField> {
@@ -12,6 +9,7 @@ pub struct ReinforcedConcrete<F: PrimeField> {
 }
 
 impl<F: PrimeField> ReinforcedConcrete<F> {
+    #[allow(clippy::assertions_on_constants)]
     pub fn new(params: &Arc<ReinforcedConcreteParams<F>>) -> Self {
         debug_assert!(ReinforcedConcreteParams::<F>::T == 3);
         ReinforcedConcrete {
@@ -117,7 +115,7 @@ impl<F: PrimeField> ReinforcedConcrete<F> {
     pub fn bars(&self, state: &[F; 3]) -> [F; 3] {
         let mut s = state.to_owned();
         for el in s.iter_mut() {
-            let mut vals = self.decompose(&el);
+            let mut vals = self.decompose(el);
             for val in vals.iter_mut() {
                 // *val = self.params.sbox[*val as usize];
                 // safe because sbox is padded to the correct size in params
@@ -131,7 +129,6 @@ impl<F: PrimeField> ReinforcedConcrete<F> {
     }
 
     pub fn permutation(&self, input: &[F; 3]) -> [F; 3] {
-        assert_eq!(ReinforcedConcreteParams::<F>::T, input.len());
         let mut current_state = input.to_owned();
         // first concrete
         self.concrete(&mut current_state, 0);
@@ -162,6 +159,12 @@ impl<F: PrimeField> ReinforcedConcrete<F> {
     pub fn hash(&self, el1: &F, el2: &F) -> F {
         let input: [F; 3] = [el1.to_owned(), el2.to_owned(), F::zero()];
         self.permutation(&input)[0]
+    }
+}
+
+impl<F: PrimeField> MerkleTreeHash<F> for ReinforcedConcrete<F> {
+    fn compress(&self, input: &[&F; 2]) -> F {
+        self.hash(input[0], input[1])
     }
 }
 

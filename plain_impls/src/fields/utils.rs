@@ -1,6 +1,6 @@
-use ff::{PrimeField, PrimeFieldDecodingError};
+use ff::{PrimeField, PrimeFieldDecodingError, PrimeFieldRepr};
 use rand::{thread_rng, Rng};
-use sha3::{digest::XofReader, Sha3XofReader};
+use sha3::digest::XofReader;
 use std::cmp::min;
 
 //-----------------------------------------------------------------------------
@@ -11,12 +11,8 @@ pub fn from_u64<F: PrimeField>(val: u64) -> F {
 pub fn random_scalar_rng<F: PrimeField, R: Rng>(allow_zero: bool, rng: &mut R) -> F {
     loop {
         let s = F::rand(rng);
-        if allow_zero {
+        if allow_zero || s != F::zero() {
             return s;
-        } else {
-            if s != F::zero() {
-                return s;
-            }
         }
     }
 }
@@ -24,12 +20,8 @@ pub fn random_scalar_rng<F: PrimeField, R: Rng>(allow_zero: bool, rng: &mut R) -
 pub fn random_scalar<F: PrimeField>(allow_zero: bool) -> F {
     loop {
         let s = F::rand(&mut thread_rng());
-        if allow_zero {
+        if allow_zero || s != F::zero() {
             return s;
-        } else {
-            if s != F::zero() {
-                return s;
-            }
         }
     }
 }
@@ -50,7 +42,7 @@ fn from_limbs_with_error<F: PrimeField>(repr: &[u64]) -> Result<F, PrimeFieldDec
     F::from_repr(tmp)
 }
 
-pub fn field_element_from_shake<F: PrimeField>(reader: &mut Sha3XofReader) -> F {
+pub fn field_element_from_shake<F: PrimeField>(reader: &mut dyn XofReader) -> F {
     let bytes = f64::ceil(F::NUM_BITS as f64 / 8f64) as usize;
     let words = f64::ceil(bytes as f64 / 8f64) as usize;
     let mod_ = F::NUM_BITS % 8;
@@ -70,9 +62,17 @@ pub fn field_element_from_shake<F: PrimeField>(reader: &mut Sha3XofReader) -> F 
             word_buf[i] = u64::from_le_bytes(byte_array);
         }
         let res = from_limbs_with_error::<F>(&word_buf);
-        match res {
-            Ok(el) => return el,
-            _ => {}
+        if let Ok(el) = res {
+            return el;
+        }
+    }
+}
+
+pub fn field_element_from_shake_without_0<F: PrimeField>(reader: &mut dyn XofReader) -> F {
+    loop {
+        let element = field_element_from_shake::<F>(reader);
+        if !element.is_zero() {
+            return element;
         }
     }
 }
@@ -89,7 +89,7 @@ fn is_zero<F: PrimeField>(a: &F::Repr) -> bool {
             return false;
         }
     }
-    return true;
+    true
 }
 
 #[inline(always)]
@@ -118,7 +118,7 @@ pub fn div_mod_crandall<F: PrimeField>(a: &F::Repr, k: u32) -> (F::Repr, u16) {
     let mask = (1u64 << k) - 1;
 
     let mut ri = a.as_ref()[0] & mask;
-    let mut qi = full_shr::<F>(&a, k);
+    let mut qi = full_shr::<F>(a, k);
 
     let mut q = qi;
     let mut r = ri;
@@ -251,8 +251,8 @@ const fn div_mod_word_by_short_normalized(
         r = r.wrapping_add(divisor);
     }
     if r >= divisor {
-        q1 = q1 + 1;
-        r = r - divisor;
+        q1 += 1;
+        r -= divisor;
     }
 
     (q1, r)
@@ -266,7 +266,7 @@ pub fn divide_long_using_recip<F: PrimeField>(
     norm_shift: u32,
 ) -> (F::Repr, u16) {
     let mut result = F::Repr::default();
-    let (repr, mut limb) = full_shl::<F>(&a, norm_shift);
+    let (repr, mut limb) = full_shl::<F>(a, norm_shift);
 
     result
         .as_mut()
@@ -326,6 +326,27 @@ pub fn mul_by_single_word<F: PrimeField>(u: &F::Repr, w: u64) -> F::Repr {
             *r = tmp as u64;
         });
     res
+}
+
+pub fn mul_by_single_word_carry<F: PrimeField>(u: &F::Repr, w: u64) -> (F::Repr, u64) {
+    let mut res = F::Repr::default();
+
+    let u_ref = u.as_ref();
+    let res_mut = res.as_mut();
+
+    let w_ = w as u128;
+
+    let mut tmp = (u_ref[0] as u128) * w_;
+    res_mut[0] = tmp as u64;
+    res_mut
+        .iter_mut()
+        .zip(u_ref.iter())
+        .skip(1)
+        .for_each(|(r, u_)| {
+            tmp = (*u_ as u128) * w_ + (tmp >> 64);
+            *r = tmp as u64;
+        });
+    (res, (tmp >> 64) as u64)
 }
 
 // -----------------------------------------------------------------------------
@@ -484,7 +505,7 @@ mod utils_test_bls12 {
 
     #[test]
     fn div_equal() {
-        let bit = 10 as u16;
+        let bit: u16 = 10;
         let div = (1 << bit) - 1;
 
         let (divisor, recip) = compute_normalized_divisor_and_reciproical(div);
@@ -595,7 +616,7 @@ mod utils_test_bn256 {
 
     #[test]
     fn div_equal() {
-        let bit = 10 as u16;
+        let bit: u16 = 10;
         let div = (1 << bit) - 1;
 
         let (divisor, recip) = compute_normalized_divisor_and_reciproical(div);
@@ -706,7 +727,7 @@ mod utils_test_st {
 
     #[test]
     fn div_equal() {
-        let bit = 10 as u16;
+        let bit: u16 = 10;
         let div = (1 << bit) - 1;
 
         let (divisor, recip) = compute_normalized_divisor_and_reciproical(div);
@@ -724,5 +745,64 @@ mod utils_test_st {
             assert_eq!(m1, m2);
             assert_eq!(m1, m3);
         }
+    }
+}
+
+//-----------------------------------------------------------------------------
+// mod_inverse
+//-----------------------------------------------------------------------------
+pub fn mod_inverse<F: PrimeField>(val: u16, modulus: &F::Repr) -> F::Repr {
+    if val == 0 {
+        panic!("0 has no inverse!");
+    }
+
+    let mut m = val;
+    let mut tmp_v = modulus.to_owned();
+
+    let (q, tmp) = divide_long::<F>(&tmp_v, m);
+    let mut v = m;
+    m = tmp;
+    let mut a = q;
+    let mut a_neg = true;
+    let mut prev_a = F::Repr::from(1);
+    let mut prev_a_neg = false;
+
+    while m != 0 {
+        let q = v / m;
+        let tmp = v % m;
+        v = m;
+        m = tmp;
+
+        let tmp_a = a;
+        let tmp_a_neg = a_neg;
+
+        let (qa, _) = mul_by_single_word_carry::<F>(&a, q as u64);
+        if a_neg != prev_a_neg {
+            a = prev_a;
+            a.add_nocarry(&qa);
+            a_neg = prev_a_neg;
+        } else if prev_a > qa {
+            a = prev_a;
+            a.sub_noborrow(&qa);
+            a_neg = prev_a_neg;
+        } else {
+            a = qa;
+            a.sub_noborrow(&prev_a);
+            a_neg = !a_neg;
+        }
+
+        prev_a = tmp_a;
+        prev_a_neg = tmp_a_neg;
+    }
+
+    if v != 1 {
+        panic!("{} has no inverse!", val);
+    }
+
+    if prev_a_neg {
+        tmp_v.sub_noborrow(&prev_a);
+        tmp_v
+    } else {
+        prev_a
     }
 }

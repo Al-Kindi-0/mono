@@ -7,6 +7,8 @@ pub extern crate ff;
 
 pub mod feistel_mimc;
 pub mod fields;
+pub mod merkle_tree;
+pub mod neptune;
 pub mod pedersen_hash;
 pub mod poseidon;
 pub mod reinforced_concrete;

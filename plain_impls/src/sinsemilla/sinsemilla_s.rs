@@ -1,8 +1,9 @@
-use constants::K;
+use super::constants::K;
 use pasta_curves::pallas;
 
-use super::constants;
-
+/// The precomputed bases for the Sinsemilla hash function.
+///
+/// https://zips.z.cash/protocol/protocol.pdf#concretesinsemillahash
 pub const SINSEMILLA_S: [(pallas::Base, pallas::Base); 1 << K] = [
     (
         pallas::Base::from_raw([

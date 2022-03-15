@@ -1,7 +1,7 @@
+use super::rescue_params::RescueParams;
+use crate::merkle_tree::merkle_tree_fp::MerkleTreeHash;
 use ff::PrimeField;
 use std::sync::Arc;
-
-use super::rescue_params::RescueParams;
 
 #[derive(Clone, Debug)]
 pub struct Rescue<S: PrimeField> {
@@ -44,24 +44,23 @@ impl<S: PrimeField> Rescue<S> {
             .map(|el| {
                 let mut el2 = *el;
                 el2.square();
-                let res = match self.params.d {
+
+                match self.params.d {
                     3 => {
                         let mut out = el2;
-                        out.mul_assign(&el);
+                        out.mul_assign(el);
                         out
                     }
                     5 => {
                         let mut out = el2;
                         out.square();
-                        out.mul_assign(&el);
+                        out.mul_assign(el);
                         out
                     }
                     _ => {
-                        assert!(false);
-                        *el
+                        panic!();
                     }
-                };
-                res
+                }
             })
             .collect()
     }
@@ -90,9 +89,9 @@ impl<S: PrimeField> Rescue<S> {
         let mut out = vec![S::zero(); t];
         // TODO check if really faster
         for row in 0..t {
-            for col in 0..t {
+            for (col, inp) in input.iter().enumerate().take(t) {
                 let mut tmp = mat[row][col];
-                tmp.mul_assign(&input[col]);
+                tmp.mul_assign(inp);
                 out[row].add_assign(&tmp);
             }
         }
@@ -110,6 +109,12 @@ impl<S: PrimeField> Rescue<S> {
                 r
             })
             .collect()
+    }
+}
+
+impl<F: PrimeField> MerkleTreeHash<F> for Rescue<F> {
+    fn compress(&self, input: &[&F; 2]) -> F {
+        self.permutation(&[input[0].to_owned(), input[1].to_owned(), F::zero()])[0]
     }
 }
 

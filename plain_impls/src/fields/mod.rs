@@ -1,5 +1,11 @@
+#[allow(clippy::too_many_arguments)]
+#[allow(clippy::derive_hash_xor_eq)]
 pub mod bls12;
+#[allow(clippy::too_many_arguments)]
+#[allow(clippy::derive_hash_xor_eq)]
 pub mod bn256;
+#[allow(clippy::too_many_arguments)]
+#[allow(clippy::derive_hash_xor_eq)]
 pub mod st;
 pub mod utils;
 pub mod utils4;

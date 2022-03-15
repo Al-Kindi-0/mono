@@ -32,9 +32,9 @@ impl<F: PrimeField> FeistelMimcParams<F> {
 
     fn instantiate_rc(rounds: usize) -> Vec<F> {
         let mut shake = Shake128::default();
-        shake.update(Self::INIT_SHAKE);
+        shake.update(Self::INIT_SHAKE.as_bytes());
         for i in F::char().as_ref() {
-            shake.update(u64::to_le_bytes(*i));
+            shake.update(&u64::to_le_bytes(*i));
         }
         let mut reader = shake.finalize_xof();
 

@@ -1,4 +1,7 @@
-use group::{ff::PrimeField, Group};
+//! Various constants used by the Zcash primitives.
+
+use group::ff::PrimeField;
+use group::Group;
 use jubjub::SubgroupPoint;
 use lazy_static::lazy_static;
 

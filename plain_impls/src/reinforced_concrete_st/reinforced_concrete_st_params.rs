@@ -1,7 +1,10 @@
 use ff::PrimeField;
 
 use crate::fields::utils;
-use sha3::{digest::ExtendableOutput, digest::Update, Sha3XofReader, Shake128};
+use sha3::{
+    digest::{core_api::XofReaderCoreWrapper, ExtendableOutput, Update, XofReader},
+    Shake128, Shake128ReaderCore,
+};
 
 #[derive(Clone, Debug)]
 pub struct ReinforcedConcreteStParams<F: PrimeField> {
@@ -34,11 +37,11 @@ impl<F: PrimeField> ReinforcedConcreteStParams<F> {
         }
     }
 
-    fn init_shake() -> Sha3XofReader {
+    fn init_shake() -> XofReaderCoreWrapper<Shake128ReaderCore> {
         let mut shake = Shake128::default();
-        shake.update(Self::INIT_SHAKE);
+        shake.update(Self::INIT_SHAKE.as_bytes());
         for i in F::char().as_ref() {
-            shake.update(u64::to_le_bytes(*i));
+            shake.update(&u64::to_le_bytes(*i));
         }
         shake.finalize_xof()
     }
@@ -55,7 +58,7 @@ impl<F: PrimeField> ReinforcedConcreteStParams<F> {
         out
     }
 
-    fn instantiate_rc(shake: &mut Sha3XofReader) -> Vec<Vec<F>> {
+    fn instantiate_rc(shake: &mut dyn XofReader) -> Vec<Vec<F>> {
         (0..=Self::TOTAL_ROUNDS)
             .map(|_| {
                 (0..Self::T)

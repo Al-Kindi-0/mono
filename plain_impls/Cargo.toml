@@ -10,26 +10,27 @@ ff = {package = "ff_ce", version = "0.13", features = ["derive"] }
 rand = "0.4" # held back for ff_ce
 lazy_static = "1.4"
 cfg-if = "1.0"
-sha3 = "0.9"
+sha3 = "0.10"
+sha2 = "0.10"
+blake2 = "0.10"
 # for sinsemilla:
-group = "0.10"
-halo2 = { git = "https://github.com/zcash/halo2.git", rev = "d04b532368d05b505e622f8cac4c0693574fbd93" }
-pasta_curves = "0.1"
+group = "0.11"
+halo2 = "=0.1.0-beta.1"
+pasta_curves = "0.2.1"
 subtle = "2.3"
 random = {package = "rand", version = "0.8"}
 # for pederson_hash:
+bitvec = "0.22"
 byteorder = "1.4"
-jubjub = "0.7"
-bls12_381 = "0.5"
+jubjub = "0.8"
+bls12_381 = "0.6"
 
 [dev-dependencies]
 criterion = "0.3"
-sha2 = "0.9"
-blake2 = "0.9" # SIMD currently broke?
 
 [features]
 default = []
-asm = ["ff/asm_derive", "sha2/asm"]
+asm = ["ff/asm_derive", "sha2/asm", "blake2/simd_asm"]
 
 [[bench]]
 name = "rc_bls12"
@@ -69,6 +70,22 @@ harness = false
 
 [[bench]]
 name = "hashes"
+harness = false
+
+[[bench]]
+name = "mt_bls12"
+harness = false
+
+[[bench]]
+name = "mt_bn256"
+harness = false
+
+[[bench]]
+name = "mt_st"
+harness = false
+
+[[bench]]
+name = "mt_hashes"
 harness = false
 
 [[example]]
