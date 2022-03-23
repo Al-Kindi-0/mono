@@ -1,5 +1,11 @@
+#[allow(clippy::too_many_arguments)]
+#[allow(clippy::derive_hash_xor_eq)]
 pub mod field48;
+#[allow(clippy::too_many_arguments)]
+#[allow(clippy::derive_hash_xor_eq)]
 pub mod field56;
+#[allow(clippy::too_many_arguments)]
+#[allow(clippy::derive_hash_xor_eq)]
 pub mod field64;
 pub mod utils;
 

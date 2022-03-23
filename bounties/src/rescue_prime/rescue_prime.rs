@@ -41,24 +41,23 @@ impl<S: PrimeField> RescuePrime<S> {
             .map(|el| {
                 let mut el2 = *el;
                 el2.square();
-                let res = match self.params.d {
+
+                match self.params.d {
                     3 => {
                         let mut out = el2;
-                        out.mul_assign(&el);
+                        out.mul_assign(el);
                         out
                     }
                     5 => {
                         let mut out = el2;
                         out.square();
-                        out.mul_assign(&el);
+                        out.mul_assign(el);
                         out
                     }
                     _ => {
-                        assert!(false);
-                        *el
+                        panic!();
                     }
-                };
-                res
+                }
             })
             .collect()
     }
@@ -77,9 +76,9 @@ impl<S: PrimeField> RescuePrime<S> {
         debug_assert!(t == input.len());
         let mut out = vec![S::zero(); t];
         for row in 0..t {
-            for col in 0..t {
+            for (col, inp) in input.iter().enumerate().take(t) {
                 let mut tmp = mat[row][col];
-                tmp.mul_assign(&input[col]);
+                tmp.mul_assign(inp);
                 out[row].add_assign(&tmp);
             }
         }

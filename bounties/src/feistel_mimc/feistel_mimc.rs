@@ -1,3 +1,4 @@
+use core::panic;
 use std::sync::Arc;
 
 use ff::PrimeField;
@@ -20,12 +21,12 @@ impl<F: PrimeField> FeistelMimc<F> {
         let mut input = *state_0;
         input.add_assign(&self.params.round_constants[round]);
 
-        let mut input2 = input.clone();
+        let mut input2 = input.to_owned();
         input2.square();
         match self.params.d {
             3 => {}
             5 => input2.square(),
-            _ => assert!(false),
+            _ => panic!(),
         }
         input2.mul_assign(&input);
         input2

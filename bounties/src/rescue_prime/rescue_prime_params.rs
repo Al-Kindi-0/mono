@@ -18,7 +18,7 @@ impl<S: PrimeField> RescuePrimeParams<S> {
         d: usize,
         rounds: usize,
         mds: &[Vec<S>],
-        round_constants: &Vec<Vec<S>>,
+        round_constants: &[Vec<S>],
     ) -> Self {
         assert!(d == 3 || d == 5);
         assert_eq!(mds.len(), t);

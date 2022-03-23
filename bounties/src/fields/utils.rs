@@ -11,12 +11,8 @@ pub fn from_u64<F: PrimeField>(val: u64) -> F {
 pub fn random_scalar_rng<F: PrimeField, R: Rng>(allow_zero: bool, rng: &mut R) -> F {
     loop {
         let s = F::rand(rng);
-        if allow_zero {
+        if allow_zero || s != F::zero() {
             return s;
-        } else {
-            if s != F::zero() {
-                return s;
-            }
         }
     }
 }
@@ -24,12 +20,8 @@ pub fn random_scalar_rng<F: PrimeField, R: Rng>(allow_zero: bool, rng: &mut R) -
 pub fn random_scalar<F: PrimeField>(allow_zero: bool) -> F {
     loop {
         let s = F::rand(&mut thread_rng());
-        if allow_zero {
+        if allow_zero || s != F::zero() {
             return s;
-        } else {
-            if s != F::zero() {
-                return s;
-            }
         }
     }
 }
@@ -72,11 +64,9 @@ pub fn field_element_from_shake<F: PrimeField>(reader: &mut Sha3XofReader) -> F 
             }
             word_buf[i] = u64::from_le_bytes(byte_array);
         }
-
         let res = from_limbs_with_error::<F>(&word_buf);
-        match res {
-            Ok(el) => return el,
-            _ => {}
+        if let Ok(el) = res {
+            return el;
         }
     }
 }
@@ -93,7 +83,7 @@ fn is_zero<F: PrimeField>(a: &F::Repr) -> bool {
             return false;
         }
     }
-    return true;
+    true
 }
 
 #[inline(always)]
@@ -122,7 +112,7 @@ pub fn div_mod_crandall<F: PrimeField>(a: &F::Repr, k: u32) -> (F::Repr, u16) {
     let mask = (1u64 << k) - 1;
 
     let mut ri = a.as_ref()[0] & mask;
-    let mut qi = full_shr::<F>(&a, k);
+    let mut qi = full_shr::<F>(a, k);
 
     let mut q = qi;
     let mut r = ri;
@@ -255,8 +245,8 @@ const fn div_mod_word_by_short_normalized(
         r = r.wrapping_add(divisor);
     }
     if r >= divisor {
-        q1 = q1 + 1;
-        r = r - divisor;
+        q1 += 1;
+        r -= divisor;
     }
 
     (q1, r)
@@ -270,7 +260,7 @@ pub fn divide_long_using_recip<F: PrimeField>(
     norm_shift: u32,
 ) -> (F::Repr, u16) {
     let mut result = F::Repr::default();
-    let (repr, mut limb) = full_shl::<F>(&a, norm_shift);
+    let (repr, mut limb) = full_shl::<F>(a, norm_shift);
 
     result
         .as_mut()
@@ -431,16 +421,14 @@ pub fn mod_inverse<F: PrimeField>(val: u16, modulus: &F::Repr) -> F::Repr {
             a = prev_a;
             a.add_nocarry(&qa);
             a_neg = prev_a_neg;
+        } else if prev_a > qa {
+            a = prev_a;
+            a.sub_noborrow(&qa);
+            a_neg = prev_a_neg;
         } else {
-            if prev_a > qa {
-                a = prev_a;
-                a.sub_noborrow(&qa);
-                a_neg = prev_a_neg;
-            } else {
-                a = qa;
-                a.sub_noborrow(&prev_a);
-                a_neg = !a_neg;
-            }
+            a = qa;
+            a.sub_noborrow(&prev_a);
+            a_neg = !a_neg;
         }
 
         prev_a = tmp_a;
@@ -463,7 +451,7 @@ pub fn mod_inverse<F: PrimeField>(val: u16, modulus: &F::Repr) -> F::Repr {
 fn subtract<F: PrimeField>(c: u64, lhs: &F::Repr, rhs: &F::Repr) -> (F::Repr, u64) {
     if lhs >= rhs {
         let mut res = lhs.to_owned();
-        res.sub_noborrow(&rhs);
+        res.sub_noborrow(rhs);
         (res, c)
     } else {
         let mut res = rhs.to_owned();
@@ -560,7 +548,7 @@ mod utils_test_48 {
 
     #[test]
     fn div_equal() {
-        let bit = 10 as u16;
+        let bit: u16 = 10;
         let div = (1 << bit) - 1;
 
         let (divisor, recip) = compute_normalized_divisor_and_reciproical(div);
@@ -689,7 +677,7 @@ mod utils_test_56 {
 
     #[test]
     fn div_equal() {
-        let bit = 10 as u16;
+        let bit: u16 = 10;
         let div = (1 << bit) - 1;
 
         let (divisor, recip) = compute_normalized_divisor_and_reciproical(div);
@@ -821,7 +809,7 @@ mod utils_test_64 {
 
     #[test]
     fn div_equal() {
-        let bit = 10 as u16;
+        let bit: u16 = 10;
         let div = (1 << bit) - 1;
 
         let (divisor, recip) = compute_normalized_divisor_and_reciproical(div);

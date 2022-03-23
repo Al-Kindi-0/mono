@@ -51,24 +51,23 @@ impl<S: PrimeField> Poseidon<S> {
     fn sbox_p(&self, input: &S) -> S {
         let mut input2 = *input;
         input2.square();
-        let res = match self.params.d {
+
+        match self.params.d {
             3 => {
                 let mut out = input2;
-                out.mul_assign(&input);
+                out.mul_assign(input);
                 out
             }
             5 => {
                 let mut out = input2;
                 out.square();
-                out.mul_assign(&input);
+                out.mul_assign(input);
                 out
             }
             _ => {
-                assert!(false);
-                *input
+                panic!();
             }
-        };
-        res
+        }
     }
 
     fn matmul(&self, input: &[S], mat: &[Vec<S>]) -> Vec<S> {
@@ -76,9 +75,9 @@ impl<S: PrimeField> Poseidon<S> {
         debug_assert!(t == input.len());
         let mut out = vec![S::zero(); t];
         for row in 0..t {
-            for col in 0..t {
+            for (col, inp) in input.iter().enumerate().take(t) {
                 let mut tmp = mat[row][col];
-                tmp.mul_assign(&input[col]);
+                tmp.mul_assign(inp);
                 out[row].add_assign(&tmp);
             }
         }
