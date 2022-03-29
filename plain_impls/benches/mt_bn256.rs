@@ -2,6 +2,7 @@ use criterion::{black_box, criterion_group, criterion_main, Criterion};
 use zkhash::{
     feistel_mimc::{feistel_mimc::FeistelMimc, feistel_mimc_instances::FM_BN_PARAMS},
     fields::{bn256::FpBN256, utils},
+    griffin::{griffin::Griffin, griffin_instances::GRIFFIN_BN_PARAMS},
     merkle_tree::merkle_tree_fp::MerkleTree,
     neptune::{neptune::Neptune, neptune_instances::NEPTUNE_BN_PARAMS},
     poseidon::{poseidon::Poseidon, poseidon_instance_bn256::POSEIDON_BN_PARAMS},
@@ -68,6 +69,21 @@ fn neptune(c: &mut Criterion, log_set_size: usize) {
     });
 }
 
+fn griffin(c: &mut Criterion, log_set_size: usize) {
+    let perm = Griffin::new(&GRIFFIN_BN_PARAMS);
+    let mut mt = MerkleTree::new(perm);
+    let set_size = 1 << log_set_size;
+    let set: Vec<Scalar> = sample_set(set_size);
+
+    let id = format!("Griffin BN256 MT (set_size = 2^{})", log_set_size);
+
+    c.bench_function(&id, move |bench| {
+        bench.iter(|| {
+            mt.accumulate(black_box(&set));
+        });
+    });
+}
+
 fn rescue(c: &mut Criterion, log_set_size: usize) {
     let perm = Rescue::new(&RESCUE_BN_PARAMS);
     let mut mt = MerkleTree::new(perm);
@@ -123,6 +139,7 @@ fn criterion_benchmark_mt_bn(c: &mut Criterion) {
         rescue_prime(c, log_set_size);
         feistel_mimc(c, log_set_size);
         neptune(c, log_set_size);
+        griffin(c, log_set_size);
     }
 }
 

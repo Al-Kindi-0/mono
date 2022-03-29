@@ -2,6 +2,7 @@ use criterion::{black_box, criterion_group, criterion_main, Criterion};
 use zkhash::{
     feistel_mimc::{feistel_mimc::FeistelMimc, feistel_mimc_instances::FM_ST_PARAMS},
     fields::{st::FpST, utils},
+    griffin::{griffin::Griffin, griffin_instances::GRIFFIN_ST_PARAMS},
     merkle_tree::merkle_tree_fp::MerkleTree,
     neptune::{neptune::Neptune, neptune_instances::NEPTUNE_ST_PARAMS},
     poseidon::{poseidon::Poseidon, poseidon_instance_st::POSEIDON_ST_PARAMS},
@@ -56,6 +57,21 @@ fn neptune(c: &mut Criterion, log_set_size: usize) {
     let set: Vec<Scalar> = sample_set(set_size);
 
     let id = format!("Neptune ST MT (set_size = 2^{})", log_set_size);
+
+    c.bench_function(&id, move |bench| {
+        bench.iter(|| {
+            mt.accumulate(black_box(&set));
+        });
+    });
+}
+
+fn griffin(c: &mut Criterion, log_set_size: usize) {
+    let perm = Griffin::new(&GRIFFIN_ST_PARAMS);
+    let mut mt = MerkleTree::new(perm);
+    let set_size = 1 << log_set_size;
+    let set: Vec<Scalar> = sample_set(set_size);
+
+    let id = format!("Griffin ST MT (set_size = 2^{})", log_set_size);
 
     c.bench_function(&id, move |bench| {
         bench.iter(|| {
@@ -119,6 +135,7 @@ fn criterion_benchmark_mt_st(c: &mut Criterion) {
         rescue_prime(c, log_set_size);
         feistel_mimc(c, log_set_size);
         neptune(c, log_set_size);
+        griffin(c, log_set_size);
     }
 }
 

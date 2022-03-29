@@ -2,6 +2,7 @@ use criterion::{black_box, criterion_group, criterion_main, Criterion};
 use zkhash::{
     feistel_mimc::{feistel_mimc::FeistelMimc, feistel_mimc_instances::FM_BLS_PARAMS},
     fields::{bls12::FpBLS12, utils},
+    griffin::{griffin::Griffin, griffin_instances::GRIFFIN_BLS_PARAMS},
     neptune::{neptune::Neptune, neptune_instances::NEPTUNE_BLS_PARAMS},
     poseidon::{poseidon::Poseidon, poseidon_instance_bls12::POSEIDON_BLS_PARAMS},
     reinforced_concrete::{
@@ -52,6 +53,22 @@ fn poseidon_permutation(c: &mut Criterion) {
     ];
 
     c.bench_function("Poseidon BLS12 Permutation", move |bench| {
+        bench.iter(|| {
+            let perm = rc.permutation(black_box(&input));
+            black_box(perm)
+        });
+    });
+}
+
+fn griffin_permutation(c: &mut Criterion) {
+    let rc = Griffin::new(&GRIFFIN_BLS_PARAMS);
+    let input: [Scalar; 3] = [
+        utils::random_scalar(true),
+        utils::random_scalar(true),
+        utils::random_scalar(true),
+    ];
+
+    c.bench_function("Griffin BLS12 Permutation", move |bench| {
         bench.iter(|| {
             let perm = rc.permutation(black_box(&input));
             black_box(perm)
@@ -221,6 +238,7 @@ fn criterion_benchmark_plain_bls(c: &mut Criterion) {
     rescue_prime_permutation(c);
     feistel_mimc_permutation(c);
     feistel_mimc_hash_two(c);
+    griffin_permutation(c);
     neptune_permutation(c);
 }
 
