@@ -10,7 +10,7 @@ The following hash functions are already implemented:
 - [Poseidon](https://eprint.iacr.org/2019/458.pdf)
 - [Rescue](https://eprint.iacr.org/2019/426.pdf)
 - [Rescue-Prime](https://www.esat.kuleuven.be/cosic/publications/article-3259.pdf)
-- [Griffin](https://eprint.iacr.org/2022/???.pdf)
+- [Griffin](https://eprint.iacr.org/2022/403.pdf)
 - [Neptune](https://eprint.iacr.org/2021/1695.pdf)
 - [Feistel-MiMC](https://eprint.iacr.org/2016/492.pdf)
 - [Pedersen-Hash](https://zips.z.cash/protocol/protocol.pdf#concretepedersenhash), code extracted from [Zcash](https://github.com/zcash/librustzcash)

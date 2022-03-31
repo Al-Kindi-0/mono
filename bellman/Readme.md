@@ -6,11 +6,11 @@ This repository contains Rust implementations of different hash functions for Ze
 
 The following hash functions are already implemented:
 
-- [Griffin](https://eprint.iacr.org/2022/???.pdf)
+- [Griffin](https://eprint.iacr.org/2022/403.pdf)
 - [Rescue-Prime](https://www.esat.kuleuven.be/cosic/publications/article-3259.pdf)
 - [Poseidon](https://eprint.iacr.org/2019/458.pdf)
 - [Neptune](https://eprint.iacr.org/2021/1695.pdf)
 - [Grendel](https://eprint.iacr.org/2021/984.pdf)
 - [GMiMC](https://eprint.iacr.org/2019/397.pdf) (Updated round numbers as described [here](https://eprint.iacr.org/2021/267.pdf))
 
-[1] [https://eprint.iacr.org/2022/???.pdf](https://eprint.iacr.org/2022/???.pdf)
+[1] [https://eprint.iacr.org/2022/403.pdf](https://eprint.iacr.org/2022/403.pdf)
