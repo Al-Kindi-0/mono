@@ -1,7 +1,6 @@
 use crate::sinsemilla::util::gen_const_array;
 use group::Curve;
-use halo2::arithmetic::CurveAffine;
-use pasta_curves::pallas;
+use pasta_curves::{pallas, arithmetic::CurveAffine};
 use subtle::CtOption;
 
 /// Coordinate extractor for Pallas.

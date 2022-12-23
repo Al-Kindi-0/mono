@@ -6,7 +6,8 @@ description = "Rust implementaiton of different hash functions for ZK"
 edition = "2018"
 
 [dependencies]
-ff = {package = "ff_ce", version = "0.13", features = ["derive"] }
+ff = {package = "ff_ce", version = "0.14", features = ["derive"] }
+serde = "1.0"
 rand = "0.4" # held back for ff_ce
 lazy_static = "1.4"
 cfg-if = "1.0"
@@ -14,19 +15,20 @@ sha3 = "0.10"
 sha2 = "0.10"
 blake2 = "0.10"
 # for sinsemilla:
-group = "0.11"
-halo2 = "=0.1.0-beta.1"
-pasta_curves = "0.2.1"
+group = "0.13"
+halo2 = "=0.1.0-beta.2"
+pasta_curves = "0.5"
 subtle = "2.3"
 random = {package = "rand", version = "0.8"}
 # for pederson_hash:
-bitvec = "0.22"
+group_ped = { package = "group", version = "0.12.1", features = ["wnaf-memuse"] }
+bitvec = "1.0"
 byteorder = "1.4"
-jubjub = "0.8"
-bls12_381 = "0.6"
+jubjub = "0.9"
+bls12_381 = "0.7"
 
 [dev-dependencies]
-criterion = "0.3"
+criterion = "0.4"
 
 [features]
 default = []

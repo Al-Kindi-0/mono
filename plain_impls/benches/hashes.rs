@@ -5,9 +5,10 @@ use bitvec::view::AsBits;
 use blake2::{Blake2b512, Blake2s256};
 use criterion::{black_box, criterion_group, criterion_main, Criterion};
 use group::ff::Field;
-use group::ff::PrimeField;
 use group::ff::PrimeFieldBits;
-use group::Curve;
+use group_ped::ff::Field as PedField;
+use group_ped::ff::PrimeField;
+use group_ped::Curve;
 use jubjub::ExtendedPoint;
 use pasta_curves::pallas::Base;
 use random::thread_rng;
@@ -69,14 +70,14 @@ fn sinsemilla(c: &mut Criterion) {
 
     let first = i2lebsp_k(0);
 
-    let input = iter::empty()
+    let input: Vec<bool> = iter::empty()
         .chain(first.iter().copied())
-        .chain(left.iter().by_val().take(L_ORCHARD_MERKLE))
-        .chain(right.iter().by_val().take(L_ORCHARD_MERKLE));
+        .chain(left.iter().by_vals().take(L_ORCHARD_MERKLE))
+        .chain(right.iter().by_vals().take(L_ORCHARD_MERKLE)).collect();
 
     c.bench_function("Sinsemilla Hash", move |bench| {
         bench.iter(|| {
-            let hash = domain.hash(black_box(input.clone()));
+            let hash = domain.hash(black_box(input.iter().copied()));
             black_box(hash)
         });
     });

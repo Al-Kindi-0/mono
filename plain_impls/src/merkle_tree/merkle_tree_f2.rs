@@ -33,8 +33,8 @@ impl<F: Digest + FixedOutputReset + Clone> MerkleTree<F> {
     }
 
     fn compress(&mut self, input: &[&Output<F>; 2]) -> Output<F> {
-        <F as Digest>::update(&mut self.hasher, &input[0]);
-        <F as Digest>::update(&mut self.hasher, &input[1]);
+        <F as Digest>::update(&mut self.hasher, input[0]);
+        <F as Digest>::update(&mut self.hasher, input[1]);
         self.hasher.finalize_reset()
     }
 

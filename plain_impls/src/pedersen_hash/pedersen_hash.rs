@@ -4,8 +4,8 @@
 // pub(crate) mod test_vectors;
 
 use byteorder::{ByteOrder, LittleEndian};
-use group::ff::PrimeField;
-use group::Group;
+use group_ped::ff::PrimeField;
+use group_ped::{Group};
 use std::ops::{AddAssign, Neg};
 
 use super::constants::{
@@ -125,7 +125,7 @@ where
 
 #[cfg(test)]
 pub mod test {
-    use group::Curve;
+    use group_ped::Curve;
 
     use crate::pedersen_hash::test_vectors;
 

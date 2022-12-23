@@ -128,7 +128,7 @@ impl<S: PrimeField + SqrtField> Griffin<S> {
     fn non_linear(&self, input: &[S]) -> Vec<S> {
         // first two state words
         let mut output = input.to_owned();
-        output[0] = output[0].pow(&self.params.d_inv);
+        output[0] = output[0].pow(self.params.d_inv);
 
         output[1].square();
         match self.params.d {

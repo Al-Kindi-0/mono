@@ -20,8 +20,8 @@ impl MerkleTreeHash for HashDomain {
         self.hash(
             iter::empty()
                 .chain(i2lebsp_k(level).iter().copied())
-                .chain(input[0].to_le_bits().iter().by_val().take(L_ORCHARD_MERKLE))
-                .chain(input[1].to_le_bits().iter().by_val().take(L_ORCHARD_MERKLE)),
+                .chain(input[0].to_le_bits().iter().by_vals().take(L_ORCHARD_MERKLE))
+                .chain(input[1].to_le_bits().iter().by_vals().take(L_ORCHARD_MERKLE)),
         )
         .unwrap_or(Base::zero())
     }

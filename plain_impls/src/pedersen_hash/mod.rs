@@ -9,7 +9,7 @@ pub mod test_vectors;
 use self::pedersen_hash::{pedersen_hash, Personalization};
 use crate::merkle_tree::merkle_tree_sapling::MerkleTreeHash;
 use bitvec::{order::Lsb0, view::AsBits};
-use group::{ff::PrimeField, Curve};
+use group_ped::{ff::PrimeField, Curve};
 use jubjub::Base;
 
 #[derive(Default)]

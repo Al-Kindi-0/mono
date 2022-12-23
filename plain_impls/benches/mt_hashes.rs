@@ -1,6 +1,7 @@
 use blake2::{Blake2b512, Blake2s256};
 use criterion::{black_box, criterion_group, criterion_main, Criterion};
 use group::ff::Field;
+use group_ped::ff::Field as PedField;
 use pasta_curves::pallas::Base;
 use random::{thread_rng, Rng};
 use sha2::{digest::Output, Digest, Sha256};

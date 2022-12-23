@@ -1,7 +1,7 @@
 //! The Sinsemilla hash function and commitment scheme.
 
 use group::Wnaf;
-use halo2::arithmetic::{CurveAffine, CurveExt};
+use pasta_curves::arithmetic::{CurveExt, CurveAffine};
 use pasta_curves::pallas;
 use subtle::CtOption;
 
@@ -204,7 +204,7 @@ mod tests {
 
     #[test]
     fn pad() {
-        assert_eq!(Pad::new([].iter().cloned()).collect::<Vec<_>>(), vec![]);
+        assert_eq!(Pad::new([].iter().cloned()).collect::<Vec<_>>(), Vec::<bool>::new());
         assert_eq!(
             Pad::new([true].iter().cloned()).collect::<Vec<_>>(),
             vec![true, false, false, false, false, false, false, false, false, false]

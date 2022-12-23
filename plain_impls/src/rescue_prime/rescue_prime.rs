@@ -69,7 +69,7 @@ impl<S: PrimeField> RescuePrime<S> {
                 if *el == S::zero() {
                     *el
                 } else {
-                    el.pow(&self.params.d_inv)
+                    el.pow(self.params.d_inv)
                 }
             })
             .collect()
