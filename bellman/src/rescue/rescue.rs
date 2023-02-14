@@ -45,7 +45,7 @@ impl<S: PrimeField> Rescue<S> {
     }
 
     fn sbox_inverse(&self, input: &[S]) -> Vec<S> {
-        input.iter().map(|el| el.pow(&self.params.d_inv)).collect()
+        input.iter().map(|el| el.pow(self.params.d_inv)).collect()
     }
 
     fn affine(&self, input: &[S], round: usize) -> Vec<S> {

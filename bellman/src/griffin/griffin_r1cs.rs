@@ -166,29 +166,39 @@ impl<S: PrimeField + SqrtField> GriffinWitness<S> {
     }
 
     fn affine_4(&self, input: &mut [S], round: usize) {
-        // multiplication by circ(3 2 1 1) is equal to state + state + rot(state) + sum(state)
-        let mut sum = input[0];
-        input.iter().skip(1).for_each(|el| sum.add_assign(el));
-        let mut input_rot = input.to_owned();
-        input_rot.rotate_left(1);
+        let mut t_0 = input[0];
+        t_0.add_assign(&input[1]);
+        let mut t_1 = input[2];
+        t_1.add_assign(&input[3]);
+        let mut t_2 = input[1];
+        t_2.double();
+        t_2.add_assign(&t_1);
+        let mut t_3 = input[3];
+        t_3.double();
+        t_3.add_assign(&t_0);
+        let mut t_4 = t_1;
+        t_4.double();
+        t_4.double();
+        t_4.add_assign(&t_3);
+        let mut t_5 = t_0;
+        t_5.double();
+        t_5.double();
+        t_5.add_assign(&t_2);
+        let mut t_6 = t_3;
+        t_6.add_assign(&t_5);
+        let mut t_7 = t_2;
+        t_7.add_assign(&t_4);
+        input[0] = t_6;
+        input[1] = t_5;
+        input[2] = t_7;
+        input[3] = t_4;
 
         if round < self.params.rounds - 1 {
-            for ((el, rot), rc) in input
+            for (i, rc) in input
                 .iter_mut()
-                .zip(input_rot.iter())
                 .zip(self.params.round_constants[round].iter())
             {
-                el.double();
-                el.add_assign(rot);
-                el.add_assign(&sum);
-                el.add_assign(rc); // add round constant
-            }
-        } else {
-            // no round constant
-            for (el, rot) in input.iter_mut().zip(input_rot.iter()) {
-                el.double();
-                el.add_assign(rot);
-                el.add_assign(&sum);
+                i.add_assign(rc);
             }
         }
     }
@@ -206,23 +216,33 @@ impl<S: PrimeField + SqrtField> GriffinWitness<S> {
         // first matrix
         let t4 = self.params.t / 4;
         for i in 0..t4 {
-            let startindex = i * 4;
-            let mut sum = input[startindex];
-            let start_el = sum;
-            input
-                .iter()
-                .skip(startindex + 1)
-                .take(3)
-                .for_each(|el| sum.add_assign(el));
-            for j in startindex..startindex + 3 {
-                input[j].double();
-                let tmp = input[j + 1];
-                input[j].add_assign(&tmp);
-                input[j].add_assign(&sum);
-            }
-            input[startindex + 3].double();
-            input[startindex + 3].add_assign(&start_el);
-            input[startindex + 3].add_assign(&sum);
+            let start_index = i * 4;
+            let mut t_0 = input[start_index];
+            t_0.add_assign(&input[start_index + 1]);
+            let mut t_1 = input[start_index + 2];
+            t_1.add_assign(&input[start_index + 3]);
+            let mut t_2 = input[start_index + 1];
+            t_2.double();
+            t_2.add_assign(&t_1);
+            let mut t_3 = input[start_index + 3];
+            t_3.double();
+            t_3.add_assign(&t_0);
+            let mut t_4 = t_1;
+            t_4.double();
+            t_4.double();
+            t_4.add_assign(&t_3);
+            let mut t_5 = t_0;
+            t_5.double();
+            t_5.double();
+            t_5.add_assign(&t_2);
+            let mut t_6 = t_3;
+            t_6.add_assign(&t_5);
+            let mut t_7 = t_2;
+            t_7.add_assign(&t_4);
+            input[start_index] = t_6;
+            input[start_index + 1] = t_5;
+            input[start_index + 2] = t_7;
+            input[start_index + 3] = t_4;
         }
 
         // second matrix
@@ -258,7 +278,7 @@ impl<S: PrimeField + SqrtField> GriffinWitness<S> {
 
         // first two state words
         let mut output = input.to_owned();
-        output[0] = output[0].pow(&self.params.d_inv);
+        output[0] = output[0].pow(self.params.d_inv);
         w[index] = Some(output[0]);
         index += 1;
 

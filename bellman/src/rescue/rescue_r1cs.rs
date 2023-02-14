@@ -204,7 +204,7 @@ impl<S: PrimeField> RescueWitness<S> {
     }
 
     fn sbox_inverse(&self, input: &[S], w: &mut [Option<S>], index: usize) -> Vec<S> {
-        let power: Vec<S> = input.iter().map(|el| el.pow(&self.params.d_inv)).collect();
+        let power: Vec<S> = input.iter().map(|el| el.pow(self.params.d_inv)).collect();
 
         let mut index = index;
         for el in &power {

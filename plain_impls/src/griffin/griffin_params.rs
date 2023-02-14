@@ -143,13 +143,31 @@ impl<F: PrimeField + SqrtField> GriffinParams<F> {
             let row = vec![utils::from_u64(2), utils::from_u64(1), utils::from_u64(1)];
             Self::circ_mat(&row)
         } else {
-            let row = vec![
+            let row1 = vec![
+                utils::from_u64(5),
+                utils::from_u64(7),
+                utils::from_u64(1),
                 utils::from_u64(3),
-                utils::from_u64(2),
+            ];
+            let row2 = vec![
+                utils::from_u64(4),
+                utils::from_u64(6),
                 utils::from_u64(1),
                 utils::from_u64(1),
             ];
-            let c_mat = Self::circ_mat(&row);
+            let row3 = vec![
+                utils::from_u64(1),
+                utils::from_u64(3),
+                utils::from_u64(5),
+                utils::from_u64(7),
+            ];
+            let row4 = vec![
+                utils::from_u64(1),
+                utils::from_u64(1),
+                utils::from_u64(4),
+                utils::from_u64(6),
+            ];
+            let c_mat = vec![row1, row2, row3, row4];
             if t == 4 {
                 c_mat
             } else {

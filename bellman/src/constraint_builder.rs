@@ -295,14 +295,11 @@ impl ConstraintBuilder {
     ) {
         #[cfg(debug_assertions)]
         {
-            match (lhs.value, rhs.value, res.value) {
-                (Some(a), Some(b), Some(c)) => {
-                    let mut tmp = a;
-                    tmp.mul_assign(&b);
-                    assert_eq!(tmp, c);
-                }
-                (_, _, _) => {}
-            };
+            if let (Some(a), Some(b), Some(c)) = (lhs.value, rhs.value, res.value) {
+                let mut tmp = a;
+                tmp.mul_assign(&b);
+                assert_eq!(tmp, c);
+            }
         }
 
         Self::enforce(lhs, rhs, res, cs);

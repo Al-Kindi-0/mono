@@ -49,7 +49,7 @@ impl<E: Engine> RescueCircuit<E> {
     ) -> Vec<ProofVar<E>> {
         let mut res = Vec::with_capacity(state.len());
         for var in state {
-            let power = var.value.map(|a| a.pow(&self.params.d_inv));
+            let power = var.value.map(|a| a.pow(self.params.d_inv));
             let new_var = CB::new_variable(power, cs);
 
             let mut sq = CB::multiplication_new(&new_var, &new_var, cs);

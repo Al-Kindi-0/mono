@@ -47,7 +47,7 @@ impl<E: Engine> GriffinCircuit<E> {
     ) -> Vec<ProofVar<E>> {
         let mut result = state.to_owned();
         // x0
-        let power = result[0].value.map(|a| a.pow(&self.params.d_inv));
+        let power = result[0].value.map(|a| a.pow(self.params.d_inv));
 
         result[0] = CB::new_variable(power, cs);
         let mut sq = CB::multiplication_new(&result[0], &result[0], cs);
