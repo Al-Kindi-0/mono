@@ -1603,7 +1603,6 @@ lazy_static! {
             from_hex("0x00fba1501842d757b24a9a0cc05a670019cec38dc3a0d61dfd3a1e20b1bdf016").unwrap(),
         ],
     ];
-    pub static ref POSEIDON_ST_PARAMS: Arc<PoseidonParams<Scalar>> = Arc::new(PoseidonParams::new(
-        3, 3, 8, 84, &MDS3, &RC3, &OPT_RC3, &W_HAT3, &V3, &M_I3
-    ));
+    pub static ref POSEIDON_ST_PARAMS: Arc<PoseidonParams<Scalar>> =
+        Arc::new(PoseidonParams::new(3, 3, 8, 84, &MDS3, &RC3));
 }

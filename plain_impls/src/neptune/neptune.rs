@@ -16,6 +16,10 @@ impl<S: PrimeField> Neptune<S> {
         }
     }
 
+    pub fn get_t(&self) -> usize {
+        self.params.t
+    }
+
     fn external_round(&self, input: &[S], r: usize) -> Vec<S> {
         let output = self.external_sbox(input);
         let output = self.external_matmul(&output);
@@ -53,6 +57,13 @@ impl<S: PrimeField> Neptune<S> {
             5 => {
                 let mut out = input2;
                 out.square();
+                out.mul_assign(input);
+                out
+            }
+            7 => {
+                let mut out = input2;
+                out.square();
+                out.mul_assign(&input2);
                 out.mul_assign(input);
                 out
             }

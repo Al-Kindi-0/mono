@@ -3,7 +3,7 @@
 use super::pedersen_hash::{test::TestVector, Personalization};
 
 pub fn get_vectors<'a>() -> Vec<TestVector<'a>> {
-     vec![
+    vec![
         TestVector {
             personalization: Personalization::NoteCommitment,
             input_bits: vec![1, 1, 1, 1, 1, 1],

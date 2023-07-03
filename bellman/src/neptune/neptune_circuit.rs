@@ -32,7 +32,7 @@ impl<E: Engine> NeptuneCircuit<E> {
         r: usize,
     ) -> Vec<ProofVar<E>> {
         let mut output = self.external_sbox(cs, input);
-        output = self.external_matmul::<CS>(&output);
+        output = self.external_matmul(&output);
         CB::add_rc::<E, CS>(&output, &self.params.round_constants[r])
     }
 
@@ -43,7 +43,7 @@ impl<E: Engine> NeptuneCircuit<E> {
         r: usize,
     ) -> Vec<ProofVar<E>> {
         let mut output = self.internal_sbox(cs, input);
-        output = self.internal_matmul::<CS>(&output);
+        output = self.internal_matmul(&output);
         CB::add_rc::<E, CS>(&output, &self.params.round_constants[r])
     }
 
@@ -127,7 +127,7 @@ impl<E: Engine> NeptuneCircuit<E> {
         output
     }
 
-    fn external_matmul<CS: ConstraintSystem<E>>(&self, input: &[ProofVar<E>]) -> Vec<ProofVar<E>> {
+    fn external_matmul(&self, input: &[ProofVar<E>]) -> Vec<ProofVar<E>> {
         let t = self.params.t;
         let mut result: Vec<ProofVar<E>> = Vec::with_capacity(t);
         for row in self.params.m_e.iter() {
@@ -144,7 +144,7 @@ impl<E: Engine> NeptuneCircuit<E> {
         result
     }
 
-    fn internal_matmul<CS: ConstraintSystem<E>>(&self, input: &[ProofVar<E>]) -> Vec<ProofVar<E>> {
+    fn internal_matmul(&self, input: &[ProofVar<E>]) -> Vec<ProofVar<E>> {
         let mut result = input.to_owned();
 
         let mut sum = input[0].to_owned();
@@ -167,7 +167,7 @@ impl<E: Engine> NeptuneCircuit<E> {
         cs: &mut CS,
         state: &[ProofVar<E>],
     ) -> Vec<ProofVar<E>> {
-        let mut current_state = self.external_matmul::<CS>(state);
+        let mut current_state = self.external_matmul(state);
 
         for r in 0..self.params.rounds_f_beginning {
             current_state = self.external_round(cs, &current_state, r);

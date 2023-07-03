@@ -19,7 +19,7 @@ impl<S: PrimeField> RescuePrimeParams<S> {
         mds: &[Vec<S>],
         round_constants: &[Vec<S>],
     ) -> Self {
-        assert!(d == 3 || d == 5);
+        assert!(d == 3 || d == 5 || d == 7);
         assert_eq!(mds.len(), t);
 
         RescuePrimeParams {

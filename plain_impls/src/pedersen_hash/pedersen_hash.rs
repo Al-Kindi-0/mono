@@ -5,7 +5,7 @@
 
 use byteorder::{ByteOrder, LittleEndian};
 use group_ped::ff::PrimeField;
-use group_ped::{Group};
+use group_ped::Group;
 use std::ops::{AddAssign, Neg};
 
 use super::constants::{

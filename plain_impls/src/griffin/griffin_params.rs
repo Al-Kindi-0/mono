@@ -23,7 +23,7 @@ impl<F: PrimeField + SqrtField> GriffinParams<F> {
 
     pub fn new(t: usize, d: usize, rounds: usize) -> Self {
         assert!(t == 3 || t % 4 == 0);
-        assert!(d == 3 || d == 5);
+        assert!(d == 3 || d == 5 || d == 7);
         assert!(rounds >= 1);
 
         let mut shake = Self::init_shake();

@@ -14,6 +14,7 @@ use pasta_curves::pallas::Base;
 use random::thread_rng;
 use sha2::{Digest, Sha256};
 use sha3::Sha3_256;
+use tiny_keccak::Hasher;
 use zkhash::pedersen_hash::pedersen_hash::{pedersen_hash, Personalization};
 use zkhash::sinsemilla::constants::L_ORCHARD_MERKLE;
 use zkhash::sinsemilla::sinsemilla::{i2lebsp_k, HashDomain, MERKLE_CRH_PERSONALIZATION};
@@ -36,6 +37,19 @@ fn sha3_256(c: &mut Criterion) {
         bench.iter(|| {
             let hash = Sha3_256::digest(black_box(input));
             black_box(hash)
+        });
+    });
+}
+
+fn sha3_256_tiny(c: &mut Criterion) {
+    let input = b"hello_world";
+    let mut output = [0u8; 32];
+
+    c.bench_function("SHA3-256 Hash (Tiny Keccak)", move |bench| {
+        bench.iter(|| {
+            let mut sha3 = tiny_keccak::Sha3::v256();
+            sha3.update(black_box(input));
+            sha3.finalize(black_box(&mut output));
         });
     });
 }
@@ -73,7 +87,8 @@ fn sinsemilla(c: &mut Criterion) {
     let input: Vec<bool> = iter::empty()
         .chain(first.iter().copied())
         .chain(left.iter().by_vals().take(L_ORCHARD_MERKLE))
-        .chain(right.iter().by_vals().take(L_ORCHARD_MERKLE)).collect();
+        .chain(right.iter().by_vals().take(L_ORCHARD_MERKLE))
+        .collect();
 
     c.bench_function("Sinsemilla Hash", move |bench| {
         bench.iter(|| {
@@ -129,6 +144,7 @@ fn pedersen(c: &mut Criterion) {
 fn criterion_benchmark_hashes(c: &mut Criterion) {
     sha256(c);
     sha3_256(c);
+    sha3_256_tiny(c);
     blake2s(c);
     blake2b(c);
     sinsemilla(c);

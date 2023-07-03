@@ -64,6 +64,7 @@ impl<S: PrimeField> PoseidonParams<S> {
         let mut m_i = vec![vec![S::zero(); t]; t];
 
         let mds_ = utils::mat_transpose(mds);
+        #[allow(clippy::redundant_clone)]
         let mut m_mul = mds_.clone();
 
         for _ in 0..rounds_p {

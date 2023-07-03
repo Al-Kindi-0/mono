@@ -81,7 +81,11 @@ mod tests {
     //     COMMIT_IVK_PERSONALIZATION, MERKLE_CRH_PERSONALIZATION, NOTE_COMMITMENT_PERSONALIZATION,
     // };
     use group::{ff::PrimeField, Curve};
-    use pasta_curves::{pallas, arithmetic::{CurveExt, CurveAffine}};
+    use pasta_curves::{
+        arithmetic::{CurveAffine, CurveExt},
+        pallas,
+    };
+
     #[test]
     fn sinsemilla_s() {
         use super::super::sinsemilla_s::SINSEMILLA_S;

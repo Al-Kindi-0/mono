@@ -27,7 +27,7 @@ impl<S: PrimeField> NeptuneParams<S> {
     pub const INIT_SHAKE: &'static str = "Neptune";
 
     pub fn new(t: usize, d: usize, rounds_f: usize, rounds_p: usize) -> Self {
-        assert!(d == 3 || d == 5);
+        assert!(d == 3 || d == 5 || d == 7);
         assert_eq!(rounds_f % 2, 0);
         assert_eq!(t % 2, 0);
 

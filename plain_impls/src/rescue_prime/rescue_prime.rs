@@ -54,6 +54,13 @@ impl<S: PrimeField> RescuePrime<S> {
                         out.mul_assign(el);
                         out
                     }
+                    7 => {
+                        let mut out = el2;
+                        out.square();
+                        out.mul_assign(&el2);
+                        out.mul_assign(el);
+                        out
+                    }
                     _ => {
                         panic!();
                     }
@@ -69,7 +76,7 @@ impl<S: PrimeField> RescuePrime<S> {
                 if *el == S::zero() {
                     *el
                 } else {
-                    el.pow(self.params.d_inv)
+                    el.pow(&self.params.d_inv[..(S::NUM_BITS as usize + 63) / 64])
                 }
             })
             .collect()
@@ -274,5 +281,56 @@ mod rescue_prime_tests_st {
             perm[2],
             from_hex("0x03764f69a9a92eca9b3f96043cfaa5855a0e38d61fef60a46308ef93d62954e2").unwrap(),
         );
+    }
+}
+
+#[cfg(test)]
+mod rescue_prime_tests_goldilocks {
+    use super::*;
+    use crate::fields::{f64::F64, utils};
+    use crate::rescue_prime::rescue_prime_instance_goldilocks::*;
+    use ff::from_hex;
+
+    type Scalar = F64;
+
+    static TESTRUNS: usize = 5;
+
+    #[test]
+    fn consistent_perm() {
+        let rescue_prime = RescuePrime::new(&RESCUE_PRIME_GOLDILOCKS_8_PARAMS);
+        let t = rescue_prime.params.t;
+        for _ in 0..TESTRUNS {
+            let input1: Vec<Scalar> = (0..t).map(|_| utils::random_scalar(true)).collect();
+
+            let mut input2: Vec<Scalar>;
+            loop {
+                input2 = (0..t).map(|_| utils::random_scalar(true)).collect();
+                if input1 != input2 {
+                    break;
+                }
+            }
+
+            let perm1 = rescue_prime.permutation(&input1);
+            let perm2 = rescue_prime.permutation(&input1);
+            let perm3 = rescue_prime.permutation(&input2);
+            assert_eq!(perm1, perm2);
+            assert_ne!(perm1, perm3);
+        }
+    }
+
+    #[test]
+    fn kats() {
+        let rescue_prime = RescuePrime::new(&RESCUE_PRIME_GOLDILOCKS_8_PARAMS);
+        let t = rescue_prime.params.t;
+        let input: Vec<Scalar> = (0..t).map(|i| utils::from_u64(i as u64)).collect();
+        let perm = rescue_prime.permutation(&input);
+        assert_eq!(perm[0], from_hex("0x78611c23bb3f3511").unwrap());
+        assert_eq!(perm[1], from_hex("0x747ca7c6adfb6053").unwrap());
+        assert_eq!(perm[2], from_hex("0x72bab842bedc7f2b").unwrap());
+        assert_eq!(perm[3], from_hex("0xff382886d0643ff1").unwrap());
+        assert_eq!(perm[4], from_hex("0x53364e0ade11b65c").unwrap());
+        assert_eq!(perm[5], from_hex("0xdd7d94314e8b2d24").unwrap());
+        assert_eq!(perm[6], from_hex("0x70f59074a73ebd6f").unwrap());
+        assert_eq!(perm[7], from_hex("0x115d7141e8c75cdd").unwrap());
     }
 }

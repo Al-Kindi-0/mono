@@ -95,6 +95,13 @@ impl<S: PrimeField> Poseidon<S> {
                 out.mul_assign(input);
                 out
             }
+            7 => {
+                let mut out = input2;
+                out.square();
+                out.mul_assign(&input2);
+                out.mul_assign(input);
+                out
+            }
             _ => {
                 panic!()
             }
@@ -343,6 +350,79 @@ mod poseidon_tests_st {
     #[test]
     fn opt_equals_not_opt() {
         let poseidon = Poseidon::new(&POSEIDON_ST_PARAMS);
+        let t = poseidon.params.t;
+        for _ in 0..TESTRUNS {
+            let input: Vec<Scalar> = (0..t).map(|_| utils::random_scalar(true)).collect();
+
+            let perm1 = poseidon.permutation(&input);
+            let perm2 = poseidon.permutation_not_opt(&input);
+            assert_eq!(perm1, perm2);
+        }
+    }
+}
+
+#[cfg(test)]
+#[allow(unused_imports)]
+mod poseidon_tests_goldilocks {
+    use super::*;
+    use crate::fields::{f64::F64, utils};
+    use crate::poseidon::poseidon_instance_goldilocks::POSEIDON_GOLDILOCKS_12_PARAMS;
+    use ff::{from_hex, Field};
+    use std::convert::TryFrom;
+
+    type Scalar = F64;
+
+    static TESTRUNS: usize = 5;
+
+    #[test]
+    fn consistent_perm() {
+        let poseidon = Poseidon::new(&POSEIDON_GOLDILOCKS_12_PARAMS);
+        let t = poseidon.params.t;
+        for _ in 0..TESTRUNS {
+            let input1: Vec<Scalar> = (0..t).map(|_| utils::random_scalar(true)).collect();
+
+            let mut input2: Vec<Scalar>;
+            loop {
+                input2 = (0..t).map(|_| utils::random_scalar(true)).collect();
+                if input1 != input2 {
+                    break;
+                }
+            }
+
+            let perm1 = poseidon.permutation(&input1);
+            let perm2 = poseidon.permutation(&input1);
+            let perm3 = poseidon.permutation(&input2);
+            assert_eq!(perm1, perm2);
+            assert_ne!(perm1, perm3);
+        }
+    }
+
+    #[test]
+    fn kats() {
+        let poseidon = Poseidon::new(&POSEIDON_GOLDILOCKS_12_PARAMS);
+        // let input: Vec<Scalar> = vec![Scalar::zero(), Scalar::one(), utils::from_u64::<Scalar>(2)];
+        let mut input: Vec<Scalar> = vec![];
+        for i in 0..poseidon.params.t {
+            input.push(utils::from_u64::<Scalar>(u64::try_from(i).unwrap()));
+        }
+        let perm = poseidon.permutation(&input);
+        assert_eq!(perm[0], from_hex("0xe9ad770762f48ef5").unwrap());
+        assert_eq!(perm[1], from_hex("0xc12796961ddc7859").unwrap());
+        assert_eq!(perm[2], from_hex("0xa61b71de9595e016").unwrap());
+        assert_eq!(perm[3], from_hex("0xead9e6aa583aafa3").unwrap());
+        assert_eq!(perm[4], from_hex("0x93e297beff76e95b").unwrap());
+        assert_eq!(perm[5], from_hex("0x53abd3c5c2a0e924").unwrap());
+        assert_eq!(perm[6], from_hex("0xf3bc50e655c74f51").unwrap());
+        assert_eq!(perm[7], from_hex("0x246cac41b9a45d84").unwrap());
+        assert_eq!(perm[8], from_hex("0xcc7f9314b2341f4f").unwrap());
+        assert_eq!(perm[9], from_hex("0xf5f071587c83415c").unwrap());
+        assert_eq!(perm[10], from_hex("0x09486cf35116fba3").unwrap());
+        assert_eq!(perm[11], from_hex("0x9d82aaf136b5c38a").unwrap());
+    }
+
+    #[test]
+    fn opt_equals_not_opt() {
+        let poseidon = Poseidon::new(&POSEIDON_GOLDILOCKS_12_PARAMS);
         let t = poseidon.params.t;
         for _ in 0..TESTRUNS {
             let input: Vec<Scalar> = (0..t).map(|_| utils::random_scalar(true)).collect();

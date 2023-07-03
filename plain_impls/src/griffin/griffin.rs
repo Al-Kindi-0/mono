@@ -16,6 +16,10 @@ impl<S: PrimeField + SqrtField> Griffin<S> {
         }
     }
 
+    pub fn get_t(&self) -> usize {
+        self.params.t
+    }
+
     fn affine_3(&self, input: &mut [S], round: usize) {
         // multiplication by circ(2 1 1) is equal to state + sum(state)
         let mut sum = input[0];
@@ -87,16 +91,16 @@ impl<S: PrimeField + SqrtField> Griffin<S> {
 
         // first matrix
         let t4 = self.params.t / 4;
-        for i in 0..t4 {
-            let start_index = i * 4;
-            let mut t_0 = input[start_index];
-            t_0.add_assign(&input[start_index + 1]);
-            let mut t_1 = input[start_index + 2];
-            t_1.add_assign(&input[start_index + 3]);
-            let mut t_2 = input[start_index + 1];
+
+        for el in input.chunks_exact_mut(4) {
+            let mut t_0 = el[0];
+            t_0.add_assign(&el[1]);
+            let mut t_1 = el[2];
+            t_1.add_assign(&el[3]);
+            let mut t_2 = el[1];
             t_2.double();
             t_2.add_assign(&t_1);
-            let mut t_3 = input[start_index + 3];
+            let mut t_3 = el[3];
             t_3.double();
             t_3.add_assign(&t_0);
             let mut t_4 = t_1;
@@ -111,10 +115,10 @@ impl<S: PrimeField + SqrtField> Griffin<S> {
             t_6.add_assign(&t_5);
             let mut t_7 = t_2;
             t_7.add_assign(&t_4);
-            input[start_index] = t_6;
-            input[start_index + 1] = t_5;
-            input[start_index + 2] = t_7;
-            input[start_index + 3] = t_4;
+            el[0] = t_6;
+            el[1] = t_5;
+            el[2] = t_7;
+            el[3] = t_4;
         }
 
         // second matrix
@@ -154,6 +158,11 @@ impl<S: PrimeField + SqrtField> Griffin<S> {
         match self.params.d {
             3 => {}
             5 => output[1].square(),
+            7 => {
+                let tmp = output[1];
+                output[1].square();
+                output[1].mul_assign(&tmp);
+            }
             _ => panic!(),
         }
         output[1].mul_assign(&input[1]);

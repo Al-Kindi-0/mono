@@ -46,11 +46,7 @@ impl<E: Engine> PoseidonCircuit<E> {
         CB::multiplication_new(state, &sq, cs)
     }
 
-    fn cheap_matmul<CS: ConstraintSystem<E>>(
-        &self,
-        state: &[ProofVar<E>],
-        r: usize,
-    ) -> Vec<ProofVar<E>> {
+    fn cheap_matmul(&self, state: &[ProofVar<E>], r: usize) -> Vec<ProofVar<E>> {
         let v = &self.params.v[r];
         let w_hat = &self.params.w_hat[r];
         let t = self.params.t;
@@ -101,7 +97,7 @@ impl<E: Engine> PermCircuit<E> for PoseidonCircuit<E> {
                     &self.params.opt_round_constants[r + 1 - self.params.rounds_f_beginning][0],
                 )
             }
-            current_state = self.cheap_matmul::<CS>(&current_state, p_end - r - 1);
+            current_state = self.cheap_matmul(&current_state, p_end - r - 1);
         }
 
         for r in p_end..self.params.rounds {

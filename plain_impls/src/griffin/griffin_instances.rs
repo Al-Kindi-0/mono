@@ -2,7 +2,7 @@ use lazy_static::lazy_static;
 use std::sync::Arc;
 
 use crate::{
-    fields::{bls12::FpBLS12, bn256::FpBN256, st::FpST},
+    fields::{bls12::FpBLS12, bn256::FpBN256, f64::F64, st::FpST},
     griffin::griffin_params::GriffinParams,
 };
 
@@ -13,4 +13,7 @@ lazy_static! {
     pub static ref GRIFFIN_BLS_PARAMS: Arc<GriffinParams<FpBLS12>> = Arc::new(GriffinParams::new(3, 5, 12));
     // ST
     pub static ref GRIFFIN_ST_PARAMS: Arc<GriffinParams<FpST>> = Arc::new(GriffinParams::new(3, 3, 16));
+    // Goldilocks
+    pub static ref GRIFFIN_GOLDILOCKS_8_PARAMS: Arc<GriffinParams<F64>> = Arc::new(GriffinParams::new(8, 7,  8));
+    pub static ref GRIFFIN_GOLDILOCKS_12_PARAMS: Arc<GriffinParams<F64>> = Arc::new(GriffinParams::new(12, 7, 8));
 }
