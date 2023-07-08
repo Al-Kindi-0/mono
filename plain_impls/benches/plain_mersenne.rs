@@ -933,50 +933,50 @@ fn bar_const(c: &mut Criterion) {
 }
 
 fn criterion_benchmark_plain_mersenne(c: &mut Criterion) {
-    poseidon_mersenne_16(c);
-    poseidon_mersenne_24(c);
+    //poseidon_mersenne_16(c);
+    //poseidon_mersenne_24(c);
 
-    poseidon_mersenne_16_const(c);
-    poseidon_mersenne_24_const(c);
+    //poseidon_mersenne_16_const(c);
+    //poseidon_mersenne_24_const(c);
 
-    poseidon2_mersenne_16(c);
-    poseidon2_mersenne_24(c);
+    //poseidon2_mersenne_16(c);
+    //poseidon2_mersenne_24(c);
 
-    poseidon2_mersenne_16_const(c);
-    poseidon2_mersenne_24_const(c);
+    //poseidon2_mersenne_16_const(c);
+    //poseidon2_mersenne_24_const(c);
 
     permutation_16(c);
     permutation_24(c);
     permutation_16_lookup(c);
     permutation_24_lookup(c);
 
-    permutation_16_const(c);
-    permutation_24_const(c);
-    permutation_16_const_lookup(c);
-    permutation_24_const_lookup(c);
+    //permutation_16_const(c);
+    //permutation_24_const(c);
+    //permutation_16_const_lookup(c);
+    //permutation_24_const_lookup(c);
 
-    bricks_16(c);
-    bricks_24(c);
+    //bricks_16(c);
+    //bricks_24(c);
 
-    concrete_16(c);
-    concrete_24(c);
+    //concrete_16(c);
+    //concrete_24(c);
 
-    bars_16(c);
-    bars_16_lookup(c);
-    bars_24(c);
-    bars_24_lookup(c);
-    bar(c);
-    bar_lookup(c);
+    //bars_16(c);
+    //bars_16_lookup(c);
+    //bars_24(c);
+    //bars_24_lookup(c);
+    //bar(c);
+    //bar_lookup(c);
 
-    bricks_16_const(c);
-    bricks_24_const(c);
+    //bricks_16_const(c);
+    //bricks_24_const(c);
 
-    concrete_16_const(c);
-    concrete_24_const(c);
+    //concrete_16_const(c);
+    //concrete_24_const(c);
 
-    bars_16_const(c);
-    bar_const(c);
-    bars_24_const(c);
+    //bars_16_const(c);
+    //bar_const(c);
+    //bars_24_const(c);
 }
 
 criterion_group!(
