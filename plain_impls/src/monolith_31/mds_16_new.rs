@@ -1,4 +1,3 @@
-
 use crate::fields::f31::Field32;
 use ff::PrimeField;
 
@@ -157,7 +156,6 @@ fn block3(x: [i64; 4], y: [i64; 4]) -> [i64; 4] {
     [z0, z1, z2, z3]
 }
 
-
 #[inline(always)]
 pub fn mds_multiply<F: Field32 + PrimeField>(state: &mut [F; 16]) {
     mds_multiply_generic(state)
@@ -216,8 +214,6 @@ fn mds_multiply_with_rc_generic<F: Field32 + PrimeField>(
         state[r] = F::from_u64(s);
     }
 }
-
-
 
 #[allow(unused)]
 fn mds_multiply_u64_generic<F: Field32 + PrimeField>(state: &mut [u64; 16]) {

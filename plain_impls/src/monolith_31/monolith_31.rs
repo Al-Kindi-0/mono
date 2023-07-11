@@ -1,6 +1,6 @@
 use super::{
-    mds_16_new,
-    monolith_31_params::{BarsType, Monolith31Params}, mds_24,
+    mds_16_new, mds_24,
+    monolith_31_params::{BarsType, Monolith31Params},
 };
 use crate::{fields::f31::Field32, merkle_tree::merkle_tree_fp_t::MerkleTreeHash};
 use ff::PrimeField;
@@ -25,7 +25,8 @@ impl<F: Field32 + PrimeField, const T: usize> Monolith31<F, T> {
                 state_u64.as_mut().try_into().unwrap(),
                 round_constants.as_ref().try_into().unwrap(),
             );
-        }if T == 24 {
+        }
+        if T == 24 {
             mds_24::mds_multiply_with_rc_u64::<F>(
                 state_u64.as_mut().try_into().unwrap(),
                 round_constants.as_ref().try_into().unwrap(),
@@ -37,7 +38,8 @@ impl<F: Field32 + PrimeField, const T: usize> Monolith31<F, T> {
     pub fn first_concrete_u64(&self, state_u64: &mut [u64; T]) {
         if T == 16 {
             mds_16_new::mds_multiply_u64::<F>(state_u64.as_mut().try_into().unwrap());
-        }if T == 24 {
+        }
+        if T == 24 {
             mds_24::mds_multiply_u64::<F>(state_u64.as_mut().try_into().unwrap());
         }
     }
