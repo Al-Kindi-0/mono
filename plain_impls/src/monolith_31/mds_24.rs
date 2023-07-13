@@ -1,18 +1,11 @@
 use crate::fields::f31::Field32;
 use ff::PrimeField;
 
-//row = [8, 59, 36, 24, 37, 15, 25, 27, 69, 95, 91, 20, 62, 64, 74, 52, 65, 53, 30, 81, 60, 4,
-//            85, 29]
-const MDS_FREQ_BLOCK_ONE: [i64; 6] = [125, 117, 278, 175, 239, 231];
-const MDS_FREQ_BLOCK_TWO: [(i64, i64); 6] = [
-    (-54, -5),
-    (9, -38),
-    (-6, -28),
-    (-91, -28),
-    (-9, -38),
-    (54, -5),
-];
-const MDS_FREQ_BLOCK_THREE: [i64; 6] = [15, -19, 74, 23, 19, -15];
+//[1, 53, 173, 21, 138, 56, 51, 183, 75, 60, 208, 238, 143, 86, 151, 223, 192, 66, 54, 158, 8, 32, 40, 167]
+const MDS_FREQ_BLOCK_ONE: [i64; 6] = [249, 480, 407, 336, 578, 527];
+const MDS_FREQ_BLOCK_TWO: [(i64, i64); 6] = [(-142, 3), (-33, -25), (22, -67), (-202, -28), (-54, -168), (-10, -71)];
+const MDS_FREQ_BLOCK_THREE: [i64; 6] = [39, -202, 241, 152, 82, -283];
+
 #[inline(always)]
 #[allow(clippy::shadow_unrelated)]
 pub(crate) fn mds_mult_24(state: [u64; 24]) -> [u64; 24] {
@@ -25,6 +18,7 @@ pub(crate) fn mds_mult_24(state: [u64; 24]) -> [u64; 24] {
     let (u12, u13, u14) = fft4_real([s3, s9, s15, s21]);
     let (u16, u17, u18) = fft4_real([s4, s10, s16, s22]);
     let (u20, u21, u22) = fft4_real([s5, s11, s17, s23]);
+
 
     let [v0, v4, v8, v12, v16, v20] = block1([u0, u4, u8, u12, u16, u20], MDS_FREQ_BLOCK_ONE);
     let [v1, v5, v9, v13, v17, v21] = block2([u1, u5, u9, u13, u17, u21], MDS_FREQ_BLOCK_TWO);
