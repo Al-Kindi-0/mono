@@ -236,3 +236,92 @@ fn mds_multiply_with_rc_u64_generic<F: Field32 + PrimeField>(
         F::reduce64(&mut state[r]);
     }
 }
+
+#[cfg(test)]
+mod mds_tests {
+    use super::*;
+    use crate::fields::{f31::F31, utils};
+    use ff::Field;
+
+    static TESTRUNS: usize = 5;
+    type Scalar = F31;
+
+    fn matmul(input: &[Scalar], mat: &[Vec<Scalar>]) -> Vec<Scalar> {
+        let t = mat.len();
+        debug_assert!(t == input.len());
+        let mut out = vec![Scalar::zero(); t];
+        for row in 0..t {
+            for (col, inp) in input.iter().enumerate().take(t) {
+                let mut tmp = mat[row][col];
+                tmp.mul_assign(inp);
+                out[row].add_assign(&tmp);
+            }
+        }
+        out
+    }
+
+    fn circ_mat(row: &[u32]) -> Vec<Vec<Scalar>> {
+        let t = row.len();
+        let mut mat: Vec<Vec<Scalar>> = Vec::with_capacity(t);
+        let mut rot: Vec<Scalar> = row.iter().map(|i| Scalar::from_u32(*i)).collect();
+        mat.push(rot.clone());
+        for _ in 1..t {
+            rot.rotate_right(1);
+            mat.push(rot.clone());
+        }
+        mat
+    }
+
+    #[test]
+    fn kats() {
+        let row = [
+            38, 29, 18, 1, 18, 20, 7, 1, 22, 27, 2, 29, 50, 52, 5, 65
+        ];
+        let mat = circ_mat(&row);
+        let round_const = [Scalar::zero(); 16];
+
+        for _ in 0..TESTRUNS {
+            let input: [Scalar; 16] = [
+                utils::random_scalar(true),
+                utils::random_scalar(true),
+                utils::random_scalar(true),
+                utils::random_scalar(true),
+                utils::random_scalar(true),
+                utils::random_scalar(true),
+                utils::random_scalar(true),
+                utils::random_scalar(true),
+                utils::random_scalar(true),
+                utils::random_scalar(true),
+                utils::random_scalar(true),
+                utils::random_scalar(true),
+                utils::random_scalar(true),
+                utils::random_scalar(true),
+                utils::random_scalar(true),
+                utils::random_scalar(true),
+            ];
+
+
+            let output1 = matmul(&input, &mat);
+            let mut output2 = input.to_owned();
+            let mut output4 = input.to_owned();
+            mds_multiply_with_rc_generic(&mut output2, &round_const);
+            mds_multiply_generic(&mut output4);
+            assert_eq!(output1, output2);
+            assert_eq!(output1, output4);
+
+            let mut output6 = [0u64; 16];
+            for (src, des) in input.iter().zip(output6.iter_mut()) {
+                *des = src.to_u32() as u64;
+            }
+            let mut output8 = output6.to_owned();
+            mds_multiply_with_rc_u64_generic(&mut output6, &round_const);
+            mds_multiply_u64_generic::<Scalar>(&mut output8);
+            for (a, b) in output1.iter().zip(output6.iter()) {
+                assert_eq!(a.to_u32(), *b as u32);
+            }
+            for (a, b) in output1.iter().zip(output8.iter()) {
+                assert_eq!(a.to_u32(), *b as u32);
+            }
+        }
+    }
+}
